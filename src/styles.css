@@ -1,5 +1,7 @@
 :root {
-  
+  --content-bg: #333446;
+  --sidebar-bg: #7F8CAA;
+  --text-color: #EAEFEF;
 }
 
 * {
@@ -22,13 +24,13 @@ body {
 }
 
 aside {
-  background-color: #7F8CAA;
+  background-color: var(--sidebar-bg);
   grid-area: sd;
 }
 
 main {
   grid-area: mn;
-  background-color: #333446;
+  background-color: var(--content-bg);
 }
 
 /* heading */
