@@ -2,6 +2,9 @@
   --content-bg: #333446;
   --sidebar-bg: #7F8CAA;
   --text-color: #EAEFEF;
+  --dark-color: #333446; 
+  --light-color: #B8CFCE;
+  --font: "Rubik", sans-serif;
 }
 
 * {
@@ -11,7 +14,7 @@
 }
 
 body {
-  font-family: "Rubik", sans-serif;
+  font-family: var(--font);
   height: 100vh;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -26,6 +29,9 @@ body {
 aside {
   background-color: var(--sidebar-bg);
   grid-area: sd;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 main {
@@ -46,22 +52,157 @@ main {
 
 .title {
   font-size: 2rem;
+  color: var(--text-color);
 }
 
 .add-task {
   border: none;
   padding: 10px;
   font-size: 1rem;
-  background-color: #7F8CAA;
-  color: #EAEFEF;
+  background-color: var(--text-color);
+  color: var(--dark-color);
   border-radius: 10px;
   transition: background-color 0.3s ease, transform 0.2s ease;
   cursor: pointer;
 }
 
 .add-task:hover {
-  background-color: #8896b4;
+  background-color: #7F8CAA;
   transform: translateY(-1px);
 }
 
 /* sidebar */
+.sidebar-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  margin-top: 3px;
+  border-bottom: 2px solid var(--dark-color);
+}
+
+.sidebar-nav > p {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.add-project-btn {
+  background-color: var(--dark-color);
+  border: none;
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.add-project-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Add project information dialog */
+dialog {
+  background-color: var(--light-color);
+  width: 250px;
+  max-width: 90%;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-40%, -50%);
+  z-index: 10;
+  border: 2px solid var(--dark-color);
+  border-radius: 10px;
+}
+
+form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font);
+}
+
+form > P {
+  font-size: 1.1rem;
+  font-family: var(--font);
+  font-weight: bold;
+  color: var(--dark-color);
+}
+
+form > input {
+  width: 100%;
+  border: 2px solid var(--dark-color);
+  border-radius: 5px;
+  font-family: var(--font);
+}
+
+form > div {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  align-items: center;
+}
+
+.submit-btn, .close-btn {
+  background-color: var(--dark-color);
+  border: none;
+  font-size: 14px;
+  padding: 5px;
+  color: var(--text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover, .close-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* projects name */
+.projects {
+  padding: 12px;
+  font-family: var(--font);
+  color: var(--dark-color);
+  font-size: 2rem;
+}
+
+.project-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.project-btn {
+  width: 60%;
+  background-color: var(--sidebar-bg);
+  color: var(--dark-color);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn {
+  background-color: var(--dark-color);
+  border: none;
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: translateY(-1px);
+}
