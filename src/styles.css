@@ -166,7 +166,9 @@ form > div {
   padding: 12px;
   font-family: var(--font);
   color: var(--dark-color);
-  font-size: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .project-item {
@@ -193,8 +195,8 @@ form > div {
 .delete-btn {
   background-color: var(--dark-color);
   border: none;
-  font-size: 1rem;
-  padding: 4px;
+  font-size: 2rem;
+  padding: 2px;
   border-radius: 8px;
   display: flex;
   justify-content: center;
