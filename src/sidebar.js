@@ -18,6 +18,11 @@ function handleFormSubmit(form) {
   
   delBtn.innerHTML = `<img src="${deleteIcon}" alt="Delete">`;
 
+  // deleting the project
+  delBtn.addEventListener("click", () => {
+    item.remove();
+  });
+
   item.classList.add("project-item");
   item.appendChild(projectName);
   item.appendChild(delBtn);
