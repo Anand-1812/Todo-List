@@ -53,6 +53,10 @@ function createDialog() {
   DomLogs.body.appendChild(dialog);
   dialog.showModal();
 
+  requestAnimationFrame(() => {
+    dialog.classList.add("show");
+  });
+
   // form submission
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -62,16 +66,21 @@ function createDialog() {
   });
 
   // remove dialog from the page 
-  const closeBtn = document.querySelector(".close-btn");
-  closeBtn.addEventListener("click", () => {
-    dialog.close();
-    dialog.remove();
+  dialog.querySelector(".close-btn").addEventListener("click", () => {
+    closeDailog(dialog);
   });
 
   dialog.addEventListener("close", () => {
+    closeDailog(dialog);
+  })
+}
+
+function closeDailog(dialog) {
+  dialog.classList.remove("show");
+  setTimeout(() => {
     dialog.close();
     dialog.remove();
-  })
+  }, 300);
 }
 
 export function createProject() {
