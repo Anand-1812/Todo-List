@@ -1,5 +1,6 @@
-import { DomLogs } from "./domLog";
+import { DomLogs } from "./global";
 import { format } from "date-fns";
+import { projects, setCurrentProject } from "./store";
 
 export class Todo {
   constructor(title, description, dueDate, priority) {
@@ -64,6 +65,7 @@ export class Todo {
       const priority = form.priority.value;
 
       const newTodo = new Todo(title, desc, date, priority);
+      projects[setCurrentProject].push(newTodo);
 
       Todo.addTodo(newTodo);
 
@@ -81,17 +83,33 @@ export class Todo {
     const title = document.createElement("h3");
     title.textContent = todo.title;
 
-    const desc = document.createElement("p");
+    const desc = document.createElement("p"); 
     desc.textContent = todo.description;
 
     const date = document.createElement("p");
-    date.textContent = `Due: ${todo.dueDate}`;
+    date.innerHTML = `<strong>Due:</strong> ${todo.dueDate}`;
 
     const priority = document.createElement("p");
+    priority.classList.add("todo-priority");
     priority.textContent = `Priority: ${todo.priority}`;
 
     todoDiv.append(title, desc, date, priority);
     itemsContainer.appendChild(todoDiv);
 
+  }
+
+  static sortOnPriority() {
+    const itemsContainer = document.querySelector(".todo-items");
+    const todos = Array.from(itemsContainer.querySelectorAll(".todo-card"));
+
+    // gpt :(
+    const sortedTodos = todos.sort((a, b) => {
+      const priorityA = parseInt(a.querySelector(".todo-priority").textContent.replace(/\D/g, ''));
+      const priorityB = parseInt(b.querySelector(".todo-priority").textContent.replace(/\D/g, ''));
+      return priorityA - priorityB; // ascending, use b - a for descending
+    });
+
+    itemsContainer.innerHTML = ""
+    sortedTodos.forEach(todo => itemsContainer.appendChild(todo));
   }
 }

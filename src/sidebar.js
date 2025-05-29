@@ -1,17 +1,31 @@
-import { DomLogs } from "./domLog";
+import { DomLogs } from "./global";
+import { Todo } from "./todos";
+import { projects, setCurrentProject } from "./store";
 import deleteIcon from "./assets/images/deleteIcon.svg";
-
 
 function handleFormSubmit(form) {
   const title = form.project.value.trim();
   if (!title) return;
 
-  console.log("Project form submitted: ", title);
+  if (!projects[title]) {
+    projects[title] = [];
+  }
+
+  
   const project = document.querySelector(".projects");
   const item = document.createElement("div");
   const projectName = document.createElement("button");
   projectName.textContent = title;
   projectName.className = "project-btn";
+
+
+  // goes to the project todo list
+  projectName.addEventListener("click", () => {
+    setCurrentProject(title);
+    document.querySelector(".title").textContent = title;
+    document.querySelector(".todo-items").innerHTML = "";
+    projects[title].forEach(todo => Todo.addTodo(todo));
+  });
 
   const delBtn = document.createElement("button");
   delBtn.type = "button";delBtn.className = "delete-btn";
