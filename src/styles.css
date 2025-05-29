@@ -104,31 +104,20 @@ main {
 }
 
 /* Add project information dialog */
-dialog {
+#projectInfo {
   background-color: var(--light-color);
   width: 250px;
   max-width: 90%;
   position: fixed;
-  top: 30%;
-  left: 40%;
-  transform: translate(-40%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 10;
   border: 2px solid var(--dark-color);
   border-radius: 10px;
-
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  pointer-events: none;
 }
 
-dialog.show {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-
-form {
+#projectInfoForm {
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -136,21 +125,21 @@ form {
   font-family: var(--font);
 }
 
-form > P {
+#projectInfoForm > P {
   font-size: 1.1rem;
   font-family: var(--font);
   font-weight: bold;
   color: var(--dark-color);
 }
 
-form > input {
+#projectInfoForm > input {
   width: 100%;
   border: 2px solid var(--dark-color);
   border-radius: 5px;
   font-family: var(--font);
 }
 
-form > div {
+#projectInfoForm > div {
   display: flex;
   justify-content: flex-start;
   gap: 12px;
@@ -224,4 +213,50 @@ form > div {
 
 .delete-btn:hover {
   transform: translateY(-1px);
+}
+
+/* Todo items  */
+#todo-info {
+  background-color: var(--light-color);
+  width: 250px;
+  max-width: 90%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border: 2px solid var(--dark-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#todo-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font);
+}
+
+#todo-info > p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--dark-color);
+  margin: 0;
+}
+
+#todo-info > input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--dark-color);
+  border-radius: 5px;
+  font-family: var(--font);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#todo-info > input:focus {
+  outline: none;
+  border-color: var(--accent-color, #007BFF);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
