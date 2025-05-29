@@ -65,8 +65,33 @@ export class Todo {
 
       const newTodo = new Todo(title, desc, date, priority);
 
+      Todo.addTodo(newTodo);
+
       todoInfo.close();
       todoInfo.remove();
     });
+  }
+
+  static addTodo(todo) {
+    const itemsContainer = document.querySelector(".todo-items");
+
+    const todoDiv = document.createElement("div");
+    todoDiv.classList.add("todo-card");
+
+    const title = document.createElement("h3");
+    title.textContent = todo.title;
+
+    const desc = document.createElement("p");
+    desc.textContent = todo.description;
+
+    const date = document.createElement("p");
+    date.textContent = `Due: ${todo.dueDate}`;
+
+    const priority = document.createElement("p");
+    priority.textContent = `Priority: ${todo.priority}`;
+
+    todoDiv.append(title, desc, date, priority);
+    itemsContainer.appendChild(todoDiv);
+
   }
 }
