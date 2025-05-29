@@ -181,6 +181,7 @@ main {
 .project-btn {
   flex: 1;
   background-color: transparent;
+  color: var(--dark-color);
   border: none;
   font-size: 1.3rem;
   font-weight: bold;
@@ -259,4 +260,23 @@ main {
   outline: none;
   border-color: var(--accent-color, #007BFF);
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* todo div */
+
+.todo-items {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.todo-card {
+  padding: 14px;
+  line-height: 28px;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--text-color);
+  margin-bottom: 16px;
 }

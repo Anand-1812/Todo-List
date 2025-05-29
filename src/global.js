@@ -13,4 +13,3 @@ export class DomLogs {
     DomLogs.todoItems = document.querySelector("todo-items");
   }
 }
-
