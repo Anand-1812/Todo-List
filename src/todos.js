@@ -15,23 +15,33 @@ export class Todo {
     document.querySelector(".todo-items").innerHTML = "";
     DomLogs.addTaskBtn.addEventListener("click", Todo.createTask);
 
-    // Deafult todo
-    if (projects.default.length === 0) {
+    const allTodos = JSON.parse(localStorage.getItem("myLocalStore")) || {};
+    const projectName = getCurrentProject();
+
+    if (!projects[projectName]) {
+      projects[projectName] = [];
+    }
+
+    if (!allTodos[projectName] || allTodos[projectName].length === 0) {
       const defaultTodo = new Todo(
         "Welcome!",
         "This is how your todo is going to look like.",
         format(new Date(), "yyyy-MM-dd"),
         3
       );
-      projects.default.push(defaultTodo);
-      Todo.addTodo(defaultTodo);  
+      
+      projects[projectName].push(defaultTodo);
+      allTodos[projectName] = [
+        [defaultTodo.title, defaultTodo.description, defaultTodo.dueDate, defaultTodo.priority],
+      ];
+      localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
     }
 
-    const stored = JSON.parse(localStorage.getItem("myLocalStore")) || [];
+    const stored = allTodos[projectName];
     stored.forEach(([title, desc, date, priority]) => {
       const todo = new Todo(title, desc, date, priority);
       Todo.addTodo(todo);
-    })
+    });
   }
 
   static createTask() {
@@ -85,12 +95,14 @@ export class Todo {
       const priority = form.priority.value;
 
       // trying local storage
-      const existingTodo = JSON.parse(localStorage.getItem("myLocalStore")) || [];
-      existingTodo.push([title, desc, date, priority]);
-      localStorage.setItem("myLocalStore", JSON.stringify(existingTodo));
-      
-
+      const allTodo = JSON.parse(localStorage.getItem("myLocalStore")) || [];
       const projectName = getCurrentProject();
+      if (!allTodo[projectName]) {
+        allTodo[projectName] = [];
+      }
+      allTodo[projectName].push([title, desc, date, priority]);
+      localStorage.setItem("myLocalStore", JSON.stringify(allTodo));
+
       if (!projects[projectName]) {
         projects[projectName] = [];
       }
@@ -139,13 +151,15 @@ export class Todo {
     delteTodoBtn.addEventListener("click", () => {
       todoDiv.remove();
 
-      const stored = JSON.parse(localStorage.getItem("myLocalStore")) || [];
-      const updated = stored.filter(
+      const allTodos = JSON.parse(localStorage.getItem("myLocalStore")) || {};
+      const currentProject = getCurrentProject();
+      const stored = allTodos[currentProject] || [];
+            const updated = stored.filter(
         ([t, d, da, p]) => !(t === todo.title && d === todo.description && da === todo.dueDate && p == todo.priority)
       );
+      allTodos[currentProject] = updated;
+      localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
 
-      localStorage.setItem("myLocalStore", JSON.stringify(updated));
-      const currentProject = getCurrentProject();
       if (projects[currentProject]) {
         projects[currentProject] = projects[currentProject].filter(
           t => !(t.title === todo.title && t.description === todo.description && t.dueDate === todo.dueDate && t.priority == todo.priority)
