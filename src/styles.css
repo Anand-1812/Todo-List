@@ -280,3 +280,23 @@ main {
   box-shadow: 0 2px 8px var(--text-color);
   margin-bottom: 16px;
 }
+
+.todo-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-todo {
+  background-color: var(--dark-color);
+  border: none;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transform: background-color 0.5s ease;
+}
+
+.delete-todo:hover {
+  background-color: #DC143C;
+}

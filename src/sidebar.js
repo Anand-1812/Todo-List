@@ -10,7 +10,6 @@ function handleFormSubmit(form) {
   if (!projects[title]) {
     projects[title] = [];
   }
-
   
   const project = document.querySelector(".projects");
   const item = document.createElement("div");
