@@ -3,48 +3,83 @@ import { Todo } from "./todos";
 import { projects, setCurrentProject } from "./store";
 import deleteIcon from "./assets/images/deleteIcon.svg";
 
-function handleFormSubmit(form) {
-  const title = form.project.value.trim();
-  if (!title) return;
-
-  if (!projects[title]) {
-    projects[title] = [];
+function updateLocalStorage() {
+  const serialized = {};
+  for (const [projectName, todos] of Object.entries(projects)) {
+    serialized[projectName] = todos.map(todo => [
+      todo.title,
+      todo.description,
+      todo.dueDate,
+      todo.priority
+    ]);
   }
-  
+  localStorage.setItem("myLocalStore", JSON.stringify(serialized));
+}
+
+function loadFromLocalStorage() {
+  const stored = JSON.parse(localStorage.getItem("myLocalStore")) || {};
+  for (const [projectName, todos] of Object.entries(stored)) {
+    projects[projectName] = todos.map(([title, desc, date, priority]) => ({
+      title,
+      description: desc,
+      dueDate: date,
+      priority
+    }));
+    createProjectItem(projectName);
+  }
+}
+
+function createProjectItem(title) {
   const project = document.querySelector(".projects");
+
   const item = document.createElement("div");
+  item.classList.add("project-item");
+
   const projectName = document.createElement("button");
   projectName.textContent = title;
   projectName.className = "project-btn";
 
-
-  // goes to the project todo list
   projectName.addEventListener("click", () => {
     setCurrentProject(title);
     document.querySelector(".title").textContent = title;
     document.querySelector(".todo-items").innerHTML = "";
-    projects[title].forEach(todo => Todo.addTodo(todo));
+
+    const todos = projects[title] || [];
+    todos.forEach(todo => Todo.addTodo(todo));
   });
 
   const delBtn = document.createElement("button");
-  delBtn.type = "button";delBtn.className = "delete-btn";
-  
+  delBtn.type = "button";
+  delBtn.className = "delete-btn";
   delBtn.innerHTML = `<img src="${deleteIcon}" alt="Delete">`;
 
-  // deleting the project
   delBtn.addEventListener("click", () => {
+    delete projects[title];
+    updateLocalStorage();
     item.remove();
+
+    const titleElem = document.querySelector(".title");
+    if (titleElem.textContent === title) {
+      titleElem.textContent = "";
+      document.querySelector(".todo-items").innerHTML = "";
+    }
   });
 
-  item.classList.add("project-item");
   item.appendChild(projectName);
   item.appendChild(delBtn);
   project.appendChild(item);
 }
 
-// create dialog
+function handleFormSubmit(form) {
+  const title = form.project.value.trim();
+  if (!title || projects[title]) return;
+
+  projects[title] = [];
+  updateLocalStorage();
+  createProjectItem(title);
+}
+
 function createDialog() {
-  // Prevent adding multiple dialogs
   if (document.getElementById("projectInfo")) return;
 
   const dialog = document.createElement("dialog");
@@ -60,7 +95,7 @@ function createDialog() {
       <button type="button" class="close-btn">Close</button>
       <button type="submit" class="submit-btn">Submit</button>
     </div>
-    `;
+  `;
 
   dialog.appendChild(form);
   DomLogs.body.appendChild(dialog);
@@ -70,25 +105,22 @@ function createDialog() {
     dialog.classList.add("show");
   });
 
-  // form submission
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     handleFormSubmit(form);
-    dialog.close();
-    dialog.remove();
+    closeDialog(dialog);
   });
 
-  // remove dialog from the page 
   dialog.querySelector(".close-btn").addEventListener("click", () => {
-    closeDailog(dialog);
+    closeDialog(dialog);
   });
 
   dialog.addEventListener("close", () => {
-    closeDailog(dialog);
-  })
+    closeDialog(dialog);
+  });
 }
 
-function closeDailog(dialog) {
+function closeDialog(dialog) {
   dialog.classList.remove("show");
   setTimeout(() => {
     dialog.close();
@@ -99,4 +131,5 @@ function closeDailog(dialog) {
 export function createProject() {
   DomLogs.navtext.innerHTML = "Your Projects";
   DomLogs.addBtn.addEventListener("click", createDialog);
+  loadFromLocalStorage();
 }

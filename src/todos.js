@@ -13,35 +13,46 @@ export class Todo {
 
   static init() {
     document.querySelector(".todo-items").innerHTML = "";
+
     DomLogs.addTaskBtn.addEventListener("click", Todo.createTask);
 
     const allTodos = JSON.parse(localStorage.getItem("myLocalStore")) || {};
     const projectName = getCurrentProject();
+    const stored = allTodos[projectName] || [];
 
-    if (!projects[projectName]) {
-      projects[projectName] = [];
-    }
-
-    if (!allTodos[projectName] || allTodos[projectName].length === 0) {
+    if (stored.length === 0) {
       const defaultTodo = new Todo(
         "Welcome!",
         "This is how your todo is going to look like.",
         format(new Date(), "yyyy-MM-dd"),
         3
       );
-      
-      projects[projectName].push(defaultTodo);
-      allTodos[projectName] = [
-        [defaultTodo.title, defaultTodo.description, defaultTodo.dueDate, defaultTodo.priority],
-      ];
-      localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
-    }
 
-    const stored = allTodos[projectName];
-    stored.forEach(([title, desc, date, priority]) => {
-      const todo = new Todo(title, desc, date, priority);
-      Todo.addTodo(todo);
-    });
+      if (!projects[projectName]) {
+        projects[projectName] = [];
+      }
+      projects[projectName].push(defaultTodo);
+
+      allTodos[projectName] = [[
+        defaultTodo.title,
+        defaultTodo.description,
+        defaultTodo.dueDate,
+        defaultTodo.priority
+      ]];
+
+      localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
+      Todo.addTodo(defaultTodo);
+    } else {
+      stored.forEach(([title, desc, date, priority]) => {
+        const todo = new Todo(title, desc, date, priority);
+        Todo.addTodo(todo);
+
+        if (!projects[projectName]) {
+          projects[projectName] = [];
+        }
+        projects[projectName].push(todo);
+      });
+    }
   }
 
   static createTask() {
@@ -55,7 +66,7 @@ export class Todo {
       <p>Add Todo</p>
       <p>
         <label for="title">Title</label>
-        <input type="text" id="title" name="title" autocomplete="off">
+        <input type="text" id="title" name="title" autocomplete="off" required>
       </p>
       <p>
         <label for="description">Description</label>
@@ -63,30 +74,27 @@ export class Todo {
       </p>
       <p>
         <label for="date">Due Date</label>
-        <input type="date" id="date" name="date">
-      </P>
+        <input type="date" id="date" name="date" required>
+      </p>
       <p>
         <label for="priority">Priority</label>
-        <input type="number" id="priority" name="priority" min="1" max="5" autocomplete="off">
-      </P>
+        <input type="number" id="priority" name="priority" min="1" max="5" required>
+      </p>
       <p>
         <button type="button" class="close-btn">Close</button>
         <button type="submit" class="submit-btn">Submit</button>
       </p>
     `;
 
-    // adding to the dom
     todoInfo.appendChild(form);
     document.body.appendChild(todoInfo);
     todoInfo.showModal();
 
-    // close the dialog
     form.querySelector(".close-btn").addEventListener("click", () => {
       todoInfo.close();
       todoInfo.remove();
     });
 
-    // handle form submission
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const title = form.title.value;
@@ -94,14 +102,15 @@ export class Todo {
       const date = format(new Date(form.date.value), "yyyy-MM-dd");
       const priority = form.priority.value;
 
-      // trying local storage
-      const allTodo = JSON.parse(localStorage.getItem("myLocalStore")) || [];
+      const allTodos = JSON.parse(localStorage.getItem("myLocalStore")) || {};
       const projectName = getCurrentProject();
-      if (!allTodo[projectName]) {
-        allTodo[projectName] = [];
+
+      if (!allTodos[projectName]) {
+        allTodos[projectName] = [];
       }
-      allTodo[projectName].push([title, desc, date, priority]);
-      localStorage.setItem("myLocalStore", JSON.stringify(allTodo));
+
+      allTodos[projectName].push([title, desc, date, priority]);
+      localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
 
       if (!projects[projectName]) {
         projects[projectName] = [];
@@ -134,7 +143,7 @@ export class Todo {
 
     todoHead.append(title, delteTodoBtn);
 
-    const desc = document.createElement("p"); 
+    const desc = document.createElement("p");
     desc.textContent = todo.description;
 
     const date = document.createElement("p");
@@ -147,40 +156,44 @@ export class Todo {
     todoDiv.append(todoHead, desc, date, priority);
     itemsContainer.appendChild(todoDiv);
 
-    // delete todo logic......
     delteTodoBtn.addEventListener("click", () => {
       todoDiv.remove();
 
       const allTodos = JSON.parse(localStorage.getItem("myLocalStore")) || {};
       const currentProject = getCurrentProject();
       const stored = allTodos[currentProject] || [];
-            const updated = stored.filter(
-        ([t, d, da, p]) => !(t === todo.title && d === todo.description && da === todo.dueDate && p == todo.priority)
+
+      const updated = stored.filter(
+        ([t, d, da, p]) =>
+          !(t === todo.title && d === todo.description && da === todo.dueDate && p == todo.priority)
       );
+
       allTodos[currentProject] = updated;
       localStorage.setItem("myLocalStore", JSON.stringify(allTodos));
 
       if (projects[currentProject]) {
         projects[currentProject] = projects[currentProject].filter(
-          t => !(t.title === todo.title && t.description === todo.description && t.dueDate === todo.dueDate && t.priority == todo.priority)
+          t =>
+            !(t.title === todo.title &&
+              t.description === todo.description &&
+              t.dueDate === todo.dueDate &&
+              t.priority == todo.priority)
         );
       }
     });
-
   }
 
   static sortOnPriority() {
     const itemsContainer = document.querySelector(".todo-items");
     const todos = Array.from(itemsContainer.querySelectorAll(".todo-card"));
 
-    // gpt :(
     const sortedTodos = todos.sort((a, b) => {
       const priorityA = parseInt(a.querySelector(".todo-priority").textContent.replace(/\D/g, ''));
       const priorityB = parseInt(b.querySelector(".todo-priority").textContent.replace(/\D/g, ''));
-      return priorityA - priorityB; // ascending, use b - a for descending
+      return priorityA - priorityB;
     });
 
-    itemsContainer.innerHTML = ""
+    itemsContainer.innerHTML = "";
     sortedTodos.forEach(todo => itemsContainer.appendChild(todo));
   }
 }

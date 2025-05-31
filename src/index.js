@@ -6,7 +6,7 @@ import { Todo } from "./todos.js";
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  DomLogs.init(); // all global dom here
+  DomLogs.init(); // all global dom here  
   createProject();
   Todo.init();
 });
