@@ -284,6 +284,7 @@ main {
 .todo-head {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 5px;
 }
 
 .delete-todo {

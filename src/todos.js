@@ -14,6 +14,19 @@ export class Todo {
   static init() {
     document.querySelector(".todo-items").innerHTML = "";
     DomLogs.addTaskBtn.addEventListener("click", Todo.createTask);
+
+    // Deafult todo
+    if (projects.default.length === 0) {
+      const defaultTodo = new Todo(
+        "Welcome!",
+        "This is how your todo is going to look like.",
+        format(new Date(), "yyyy-MM-dd"),
+        3
+      );
+      projects.default.push(defaultTodo);
+      Todo.addTodo(defaultTodo);  
+    }
+
     const stored = JSON.parse(localStorage.getItem("myLocalStore")) || [];
     stored.forEach(([title, desc, date, priority]) => {
       const todo = new Todo(title, desc, date, priority);
