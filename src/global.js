@@ -10,6 +10,6 @@ export class DomLogs {
     DomLogs.addBtn = document.querySelector(".add-project-btn");
     DomLogs.body = document.querySelector("body");
     DomLogs.addTaskBtn = document.getElementsByClassName("add-task")[0];
-    DomLogs.todoItems = document.querySelector("todo-items");
+    DomLogs.todoItems = document.querySelector(".todo-items");
   }
 }
