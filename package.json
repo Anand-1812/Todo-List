@@ -1,19 +1,30 @@
 {
-  "devDependencies": {
-    "css-loader": "^7.1.2",
-    "html-loader": "^5.1.0",
-    "html-webpack-plugin": "^5.6.3",
-    "style-loader": "^4.0.0",
-    "webpack": "^5.99.9",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.1"
-  },
+  "name": "todo-list",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack serve",
-    "deploy": "git subtree push --prefix dist origin gh-pages"
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "date-fns": "^4.1.0"
+    "@react-router/node": "7.12.0",
+    "@react-router/serve": "7.12.0",
+    "isbot": "^5.1.31",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router": "7.12.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "7.12.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
