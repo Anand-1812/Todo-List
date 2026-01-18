@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router";
+
 const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative min-h-screen flex flex-col justify-center items-center p-4 bg-neutral-950 overflow-hidden">
       {/* Dots pattern */}
@@ -32,6 +36,7 @@ const Landing = () => {
 
         <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
           <button
+            onClick={() => navigate("/signup")}
             className="px-8 py-3 bg-white text-black font-semibold rounded-full
             hover:bg-neutral-200 transition-all duration-200
             active:scale-95 shadow-lg shadow-white/5 cursor-pointer"

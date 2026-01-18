@@ -8,10 +8,11 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import "./app.css";
+import stylesheet from "./tailwind.css?url";
 import Navbar from "components/Navbar";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet }, // ✅ Tailwind injected here
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -24,7 +25,6 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// gives the layout for all the pages
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -35,23 +35,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <div>
-          <Navbar />
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-        </div>
+        <Navbar />
+        {children}
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );
 }
 
-// this does the routing
 export default function App() {
   return <Outlet />;
 }
 
-// renders the error on the page
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";

@@ -10,11 +10,8 @@ const Signup = () => {
         className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-900/70
         backdrop-blur p-6 shadow-xl"
       >
-        <h1
-          className="text-3xl font-semibold text-center text-shadow-black
-          text-transparent bg-gradient-to-l from-neutral-50 via-neutral-300 to-neutral-50 bg-clip-text"
-        >
-          Let's get you onboard
+        <h1 className="text-3xl font-semibold text-white text-center">
+          Create account
         </h1>
 
         <p className="text-center text-sm text-neutral-400 mt-2">
@@ -22,17 +19,6 @@ const Signup = () => {
         </p>
 
         <form className="mt-6 space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm text-neutral-300">Name</label>
-            <input
-              type="name"
-              placeholder="Your name"
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950
-              px-4 py-3 text-neutral-100 placeholder:text-neutral-500 outline-none focus:ring-2 focus:ring-sky-500/60"
-              required
-            />
-          </div>
-
           <div className="space-y-2">
             <label className="text-sm text-neutral-300">Email</label>
             <input
@@ -65,8 +51,8 @@ const Signup = () => {
 
           <p className="text-center text-sm text-neutral-400">
             Already have an account?{" "}
-            <Link to="/login" className="text-sky-400 hover:text-sky-300">
-              log in
+            <Link to="/signup" className="text-sky-400 hover:text-sky-300">
+              Sign in
             </Link>
           </p>
         </form>
