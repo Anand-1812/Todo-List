@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-const Signup = () => {
+const Login = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b
@@ -61,4 +61,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

@@ -30,6 +30,7 @@ const Signup = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
+        credentials: "include",
       });
       const data = await res.json().catch(() => null);
 
@@ -38,7 +39,7 @@ const Signup = () => {
         return;
       }
 
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err: any) {
       setError(err?.message || "Something went wrong");
     } finally {
