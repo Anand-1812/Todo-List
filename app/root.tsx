@@ -27,8 +27,18 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+import { useLoaderData } from "react-router";
+import { requireUserSession } from "./utils/auth.router";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await requireUserSession(request);
+  return { user };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // get the user from the loader
+  const { user } = useLoaderData<typeof loader>();
+  const isLoggedIn = !!user;
 
   return (
     <html lang="en">
@@ -39,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <AuthContext.Provider value={isLoggedIn}>
+        <AuthContext.Provider value={user}>
           <Navbar />
           {children}
           <ScrollRestoration />
