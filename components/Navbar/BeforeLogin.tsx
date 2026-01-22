@@ -1,7 +1,11 @@
+import AuthContext from "Context/Context";
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router";
 
 const BeforeLogin = () => {
   const navigate = useNavigate();
+
+  const isLoggedIn = useContext(AuthContext);
 
   return (
     <nav className="absolute fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 mt-2">

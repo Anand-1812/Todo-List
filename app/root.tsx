@@ -10,6 +10,8 @@ import {
 import type { Route } from "./+types/root";
 import stylesheet from "./tailwind.css?url";
 import Navbar from "components/Navbar";
+import AuthContext from "Context/Context";
+import { useState } from "react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet }, // ✅ Tailwind injected here
@@ -26,6 +28,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <html lang="en">
       <head>
@@ -35,10 +39,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Navbar />
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <AuthContext.Provider value={isLoggedIn}>
+          <Navbar />
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </AuthContext.Provider>
       </body>
     </html>
   );
