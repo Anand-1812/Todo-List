@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
   ShoppingCart,
   PanelRightClose,
@@ -11,7 +11,25 @@ import {
 import { useState } from "react";
 
 const AfterLogin = ({ user }: { user: any }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        navigate("/");
+      } else {
+        console.error("Logout failed on server");
+      }
+    } catch (error: any) {
+      console.error("Logout error:", error.message);
+    }
+  };
 
   return (
     <div
@@ -76,6 +94,8 @@ const AfterLogin = ({ user }: { user: any }) => {
           />
 
           <button
+            title="logout"
+            onClick={handleLogout}
             className={`flex items-center gap-4 w-full px-4 py-3 text-red-400/80
               hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all ${!isOpen && "justify-center"
               }`}
