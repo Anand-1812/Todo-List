@@ -1,10 +1,10 @@
 import { redirect } from "react-router";
 
 export async function requireUserSession(request: Request) {
-  const cookie = request.headers.get("cookie");
+  const cookie = request.headers.get("Cookie");
 
   try {
-    const res = await fetch("http://localhost-3001/api/auth/me", {
+    const res = await fetch("http://localhost:3001/api/auth/me", {
       headers: {
         Cookie: cookie || "",
       },
@@ -24,5 +24,5 @@ export async function requireAuth(request: Request) {
   if (!user) {
     throw redirect("/login");
   }
-  return user;
+  return { user };
 }

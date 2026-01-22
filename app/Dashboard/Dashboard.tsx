@@ -7,9 +7,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
+  const userName = loaderData?.user?.name || "Guest";
+
   return (
-    <div className="p-8 text-white">
-      <h1>Welcome back, {loaderData.user.name}!</h1>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-white">Welcome, {userName}!</h1>
     </div>
   );
 }
