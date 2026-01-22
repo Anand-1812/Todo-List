@@ -47,7 +47,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
           </h1>
         </div>
 
-        {/* Note Creator Bar - Google Keep Style */}
+        {/* Note create bar */}
         <div className="max-w-2xl mx-auto mb-20">
           <div
             className="bg-neutral-900/80 border border-white/10 rounded-2xl p-5 shadow-2xl
@@ -101,7 +101,6 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
   );
 }
 
-// Reusable NoteCard component with explicit typing
 function NoteCard({ title, content, tag, color = "border-white/10" }: Note) {
   return (
     <div
