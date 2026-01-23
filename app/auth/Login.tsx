@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
@@ -35,6 +36,8 @@ const Login = () => {
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
+
+      toast.success("login success");
 
       // Success: Navigate to dashboard
       navigate("/dashboard");
@@ -86,7 +89,7 @@ const Login = () => {
             type="submit" // FIX 2: Change to submit
             disabled={loading}
             className="w-full rounded-xl bg-sky-500 px-4 py-3 font-semibold text-white
-            transition hover:bg-sky-400 disabled:opacity-50"
+            transition hover:bg-sky-400 disabled:opacity-50 cursor-pointer"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

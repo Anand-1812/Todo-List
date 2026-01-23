@@ -9,6 +9,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const AfterLogin = ({ user }: { user: any }) => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const AfterLogin = ({ user }: { user: any }) => {
       });
 
       if (res.ok) {
+        toast.success("logout success");
         navigate("/");
       } else {
         console.error("Logout failed on server");
@@ -40,8 +42,11 @@ const AfterLogin = ({ user }: { user: any }) => {
       {/* 1. Header Section - Standardized Height */}
       <div className="flex items-center justify-between h-20 px-5 border-b border-white/10 shrink-0">
         {isOpen && (
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-white font-semibold tracking-tight truncate">
+          <div className="flex flex-col overflow-hidden cursor-pointer">
+            <span
+              onClick={() => navigate("/")}
+              className="text-white font-semibold tracking-tight truncate"
+            >
               Notes App
             </span>
             <span className="text-[10px] text-neutral-400 truncate w-32">
@@ -97,7 +102,7 @@ const AfterLogin = ({ user }: { user: any }) => {
           title="logout"
           onClick={handleLogout}
           className={`group flex items-center h-12 w-full rounded-xl transition-all duration-200
-            text-red-400/80 hover:bg-red-500/10 hover:text-red-400
+            text-red-400/80 hover:bg-red-500/10 hover:text-red-400 cursor-pointer
             ${!isOpen ? "justify-center" : "px-4 gap-4"}`}
         >
           <div className="flex items-center justify-center shrink-0 w-6">
@@ -134,7 +139,7 @@ function NavItem({
           ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
           : "text-neutral-400 hover:bg-white/5 hover:text-neutral-100"
         }
-      `}
+    `}
       title={!isOpen ? title : ""}
     >
       {/* Icon wrapper ensures center alignment in collapsed mode */}

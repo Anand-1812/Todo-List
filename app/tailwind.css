@@ -17,17 +17,17 @@ body {
 
 @layer components {
   .animate-fade-up {
-    animation: fade-up 0.8s ease-out forwards;
+    animation: fade-up 0.5s ease-out forwards;
   }
 
   @keyframes fade-up {
     from {
-      opacity: 0;
+      opacity: 0%;
       transform: translateY(20px);
     }
 
     to {
-      opacity: 1;
+      opacity: 100%;
       transform: translateY(0);
     }
   }

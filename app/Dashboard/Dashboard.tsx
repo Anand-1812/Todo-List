@@ -21,7 +21,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 pl-20 transition-all duration-300">
-      <header className="sticky top-0 z-30 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5 px-8 py-4">
+      <header className="sticky top-0 z-30 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5 px-8 py-[15px]">
         <div className="max-w-3xl mx-auto relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 w-5 h-5 group-focus-within:text-sky-400 transition-colors" />
           <input

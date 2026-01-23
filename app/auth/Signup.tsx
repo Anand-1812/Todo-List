@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
+import { toast } from "sonner";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -38,6 +39,8 @@ const Signup = () => {
         setError(data?.message || "Signup failed");
         return;
       }
+
+      toast("signup success");
 
       navigate("/login");
     } catch (err: any) {

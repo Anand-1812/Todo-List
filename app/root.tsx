@@ -29,6 +29,7 @@ export const links: Route.LinksFunction = () => [
 
 import { useLoaderData } from "react-router";
 import { requireUserSession } from "./utils/auth.router";
+import { Toaster } from "sonner";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUserSession(request);
@@ -52,6 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <AuthContext.Provider value={user}>
           <Navbar />
           {children}
+          <Toaster position="top-right" richColors duration={2500} />
           <ScrollRestoration />
           <Scripts />
         </AuthContext.Provider>
