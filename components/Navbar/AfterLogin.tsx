@@ -16,9 +16,9 @@ const AfterLogin = ({ user }: { user: any }) => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:6969/api/auth/logout", {
-        method: "POST", // Matches backend requirement
-        credentials: "include", // Ensures session cookie is sent
+      const res = await fetch("http://localhost:3001/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
       });
 
       if (res.ok) {

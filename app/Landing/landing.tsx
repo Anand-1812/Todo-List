@@ -1,7 +1,11 @@
+import AuthContext from "Context/Context";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 
 const Landing = () => {
   const navigate = useNavigate();
+
+  const user = useContext(AuthContext);
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center items-center p-4 bg-neutral-950 overflow-hidden">
@@ -35,14 +39,25 @@ const Landing = () => {
         </p>
 
         <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
-          <button
-            onClick={() => navigate("/signup")}
-            className="px-8 py-3 bg-white text-black font-semibold rounded-full
-            hover:bg-neutral-200 transition-all duration-200
-            active:scale-95 shadow-lg shadow-white/5 cursor-pointer"
-          >
-            Get Started
-          </button>
+          {user ? (
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="px-8 py-3 bg-white text-black font-semibold rounded-full
+                hover:bg-neutral-200 transition-all duration-200
+                active:scale-95 shadow-lg shadow-white/5 cursor-pointer"
+            >
+              My notes
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/signup")}
+              className="px-8 py-3 bg-white text-black font-semibold rounded-full
+                hover:bg-neutral-200 transition-all duration-200
+                active:scale-95 shadow-lg shadow-white/5 cursor-pointer"
+            >
+              Get Started
+            </button>
+          )}
 
           <button
             className="px-8 py-3 bg-neutral-900/50 text-neutral-100 font-semibold rounded-full
