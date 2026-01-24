@@ -32,7 +32,7 @@ const Landing = () => {
         </h1>
 
         <p className="mt-8 text-lg text-neutral-400 max-w-2xl leading-relaxed">
-          Built for speed and focus. Organize your daily DSA notes, ML progress,
+          Built for speed and focus. Organize your daily thoughts, ML progress,
           and side projects in a clutter-free environment.
         </p>
 
@@ -49,7 +49,7 @@ const Landing = () => {
             className="px-8 py-4 bg-neutral-900 border border-white/10 font-bold rounded-full
             hover:bg-neutral-800 transition-all cursor-pointer"
           >
-            View Rice UI Docs
+            How to use ?
           </button>
         </div>
       </div>
