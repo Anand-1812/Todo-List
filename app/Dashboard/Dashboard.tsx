@@ -10,6 +10,7 @@ import {
   Trash2,
   Pencil,
   Check,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,9 +35,11 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Form & Edit State
   const [newNote, setNewNote] = useState({ title: "", content: "", tag: "" });
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
+  // Custom Delete Modal State
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -111,25 +114,30 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
   const confirmDelete = async () => {
     if (!noteToDelete) return;
+
     setDeleteLoading(true);
-    try {
-      const res = await fetch(
-        `http://localhost:3001/api/notes/${noteToDelete}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-      if (res.ok) {
-        toast.success("Note removed");
-        setNoteToDelete(null);
-        window.location.reload();
+
+    // 1-second wait to make it feel intentional
+    setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3001/api/notes/${noteToDelete}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          },
+        );
+        if (res.ok) {
+          toast.success("Note removed");
+          setNoteToDelete(null);
+          window.location.reload();
+        }
+      } catch (error) {
+        toast.error("Delete failed");
+      } finally {
+        setDeleteLoading(false);
       }
-    } catch (error) {
-      toast.error("Delete failed");
-    } finally {
-      setDeleteLoading(false);
-    }
+    }, 1000);
   };
 
   const filteredNotes = notes.filter((note: Note) =>
@@ -175,11 +183,12 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
       <main className="max-w-7xl mx-auto p-4 sm:p-8 lg:p-12">
         <div className="mb-8 sm:mb-12">
           <h1 className="text-2xl sm:text-4xl font-light text-neutral-400">
-            Welcome,{" "}
+            Welcome back,{" "}
             <span className="text-white font-semibold">{user.name}</span>
           </h1>
         </div>
 
+        {/* Note Form */}
         <div className="max-w-2xl mx-auto mb-10 sm:mb-20">
           <form
             onSubmit={handleSubmit}
@@ -197,7 +206,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
                 onChange={handleInputChange}
                 className="
                   w-full bg-transparent px-4 py-3 outline-none
-                  text-lg font-semibold text-white
+                  text-lg font-semibold text-white placeholder:text-neutral-600
                 "
               />
             )}
@@ -210,7 +219,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
               rows={isExpanded || editingNoteId ? 3 : 1}
               className="
                 w-full bg-transparent px-4 py-2 outline-none
-                resize-none text-neutral-300
+                resize-none text-neutral-300 placeholder:text-neutral-500
               "
               required
             />
@@ -258,24 +267,32 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
           </form>
         </div>
 
-        <div
-          className="
+        {filteredNotes.length > 0 ? (
+          <div
+            className="
           columns-1 sm:columns-2 lg:columns-3 xl:columns-4
           gap-4 sm:gap-6 space-y-4 sm:space-y-6
         "
-        >
-          {filteredNotes.map((note: Note) => (
-            <NoteCard
-              key={note._id}
-              note={note}
-              onDelete={() => setNoteToDelete(note._id)}
-              onEdit={() => handleEditInitiate(note)}
-              onPin={() => handleTogglePin(note._id)}
-            />
-          ))}
-        </div>
+          >
+            {filteredNotes.map((note: Note) => (
+              <NoteCard
+                key={note._id}
+                note={note}
+                onDelete={() => setNoteToDelete(note._id)}
+                onEdit={() => handleEditInitiate(note)}
+                onPin={() => handleTogglePin(note._id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            isSearching={searchQuery.length > 0}
+            onClear={() => setSearchQuery("")}
+          />
+        )}
       </main>
 
+      {/* Custom Delete Modal */}
       {noteToDelete && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
@@ -312,9 +329,12 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
                   className="
                     w-full py-4 bg-red-500 hover:bg-red-600
                     text-white font-bold rounded-2xl cursor-pointer
-                    disabled:opacity-50
+                    disabled:opacity-50 flex items-center justify-center gap-2
                   "
                 >
+                  {deleteLoading && (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  )}
                   {deleteLoading ? "Deleting..." : "Delete Permanently"}
                 </button>
                 <button
@@ -330,6 +350,42 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
             </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+function EmptyState({
+  isSearching,
+  onClear,
+}: {
+  isSearching: boolean;
+  onClear: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 animate-in fade-in zoom-in-95 duration-500">
+      <div className="w-24 h-24 bg-neutral-900 rounded-full flex items-center justify-center mb-6 border border-white/5">
+        <Plus className="text-neutral-700 w-10 h-10" />
+      </div>
+
+      <h3 className="text-xl font-semibold text-neutral-200 mb-2">
+        {isSearching ? "No matches found" : "Your workspace is empty"}
+      </h3>
+
+      <p className="text-neutral-500 text-sm max-w-[250px] text-center leading-relaxed mb-8">
+        {isSearching
+          ? "We couldn't find any notes matching your current search query."
+          : "Start capturing your DSA solutions, notes, and project ideas today."}
+      </p>
+
+      {isSearching && (
+        <button
+          onClick={onClear}
+          className="px-6 py-2 bg-neutral-900 border border-white/10 text-neutral-300 rounded-full
+          text-sm font-medium hover:bg-neutral-800 transition-all cursor-pointer"
+        >
+          Clear search
+        </button>
       )}
     </div>
   );
