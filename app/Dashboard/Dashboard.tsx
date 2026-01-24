@@ -19,7 +19,7 @@ interface Note {
   content: string;
   tag?: string;
   color?: string;
-  isPinned?: boolean; // Added isPinned to interface
+  isPinned?: boolean;
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
