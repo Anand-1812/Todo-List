@@ -4,12 +4,7 @@ import { Link, useNavigate } from "react-router";
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [user, setUser] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -32,14 +27,9 @@ const Login = () => {
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      toast.success("login success");
-
-      // Success: Navigate to dashboard
+      toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err: any) {
       setError(err?.message || "Something went wrong");
@@ -49,57 +39,88 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-neutral-950">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-900/70 p-6 shadow-xl">
-        <h1 className="text-3xl font-semibold text-white text-center">Login</h1>
+    <div className="relative min-h-screen flex items-center justify-center px-4 bg-neutral-950 overflow-hidden">
+      {/* Background Pattern */}
+      <div
+        className="absolute inset-0 bg-[radial-gradient(#2e2e2e_1px,transparent_1px)]
+        [background-size:32px_32px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50"
+      ></div>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+      {/* Glow Effect */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-sky-500/5 blur-[100px] rounded-full"></div>
+
+      <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/10 bg-neutral-900/40 backdrop-blur-xl p-8 shadow-2xl">
+        <header className="text-center space-y-2 mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            Welcome Back
+          </h1>
+          <p className="text-sm text-neutral-400">
+            Enter your details to access your notes
+          </p>
+        </header>
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="text-sm text-neutral-300">Email</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
+              Email
+            </label>
             <input
               type="email"
-              name="email" // Added name attribute
+              name="email"
               value={user.email}
               onChange={handleChange}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4
-              py-3 text-neutral-100 outline-none focus:ring-2 focus:ring-sky-500/60"
+              placeholder="name@example.com"
+              className="w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3.5 text-neutral-100
+              outline-none focus:ring-2 focus:ring-sky-500/40 transition-all placeholder:text-neutral-700"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-neutral-300">Password</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
+              Password
+            </label>
             <input
               type="password"
-              name="password" // Added name attribute
+              name="password"
               value={user.password}
               onChange={handleChange}
-              placeholder="Minimum 8 characters"
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4
-              py-3 text-neutral-100 outline-none focus:ring-2 focus:ring-sky-500/60"
+              placeholder="••••••••"
+              className="w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3.5 text-neutral-100
+              outline-none focus:ring-2 focus:ring-sky-500/40 transition-all placeholder:text-neutral-700"
               required
               minLength={8}
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+              <p className="text-red-400 text-xs text-center font-medium">
+                {error}
+              </p>
+            </div>
+          )}
 
           <button
-            type="submit" // FIX 2: Change to submit
+            type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-sky-500 px-4 py-3 font-semibold text-white
-            transition hover:bg-sky-400 disabled:opacity-50 cursor-pointer"
+            className="w-full rounded-xl bg-white px-4 py-4 font-bold text-black transition-all hover:bg-neutral-200
+            active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-lg"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Authenticating..." : "Sign In"}
           </button>
 
-          <p className="text-center text-sm text-neutral-400">
-            New User?{" "}
-            <Link to="/signup" className="text-sky-400 hover:text-sky-300">
-              Sign up
-            </Link>
-          </p>
+          <footer className="pt-4 text-center">
+            <p className="text-sm text-neutral-500">
+              New here?{" "}
+              <Link
+                to="/signup"
+                className="text-white font-medium hover:underline underline-offset-4 cursor-pointer"
+              >
+                Create an account
+              </Link>
+            </p>
+          </footer>
         </form>
       </div>
     </div>

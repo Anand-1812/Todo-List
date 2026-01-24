@@ -12,6 +12,7 @@ interface Note {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
+  // requireAuth ensures the user is logged in before rendering
   const user = await requireAuth(request);
   const notes = await getUserNotes(request);
   return { user, notes };
@@ -63,36 +64,36 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 pl-20 transition-all duration-300">
-      <header className="sticky top-0 z-30 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5 px-8 py-[15px]">
+    // FIX: pl-0 for phone, sm:pl-20 for desktop sidebar space
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 pl-0 sm:pl-20 transition-all duration-300">
+      {/* Responsive Header */}
+      <header className="sticky top-0 z-30 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-8 py-[15px]">
         <div className="max-w-3xl mx-auto relative group">
-          <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 w-5
-            h-5 group-focus-within:text-sky-400 transition-colors"
-          />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 w-5 h-5 group-focus-within:text-sky-400 transition-colors" />
           <input
             type="text"
             placeholder="Search notes..."
-            className="w-full bg-neutral-900/50 border border-white/10 rounded-2xl py-3 pl-12 pr-4
-            outline-none focus:ring-2 focus:ring-sky-500/40 focus:bg-neutral-900 transition-all shadow-inner"
+            className="w-full bg-neutral-900/50 border border-white/10 rounded-2xl py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-sky-500/40 focus:bg-neutral-900 transition-all shadow-inner"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-8 lg:p-12">
-        <div className="mb-12">
+      <main className="max-w-7xl mx-auto p-4 sm:p-8 lg:p-12">
+        {/* Responsive Welcome Section */}
+        <div className="mb-8 sm:mb-12">
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-bold mb-2">
             Workspace
           </p>
-          <h1 className="text-4xl font-light text-neutral-400">
-            Welcome back,{" "}
+          <h1 className="text-2xl sm:text-4xl font-light text-neutral-400">
+            Welcome,{" "}
             <span className="text-white font-semibold">{user.name}</span>
           </h1>
         </div>
 
-        <div className="max-w-2xl mx-auto mb-20">
+        {/* Note Creator Form - Optimized for Phone */}
+        <div className="max-w-2xl mx-auto mb-10 sm:mb-20">
           <form
             onSubmit={handleSubmit}
             className="bg-neutral-900/80 border border-white/10 rounded-2xl p-2 shadow-2xl transition-all"
@@ -124,28 +125,29 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
                   <input
                     type="text"
                     name="tag"
-                    placeholder="Add tag..."
+                    placeholder="Tag"
                     value={newNote.tag}
                     onChange={handleInputChange}
-                    className="bg-transparent text-xs text-neutral-400 outline-none w-20"
+                    className="bg-transparent text-xs text-neutral-400 outline-none w-16 sm:w-20"
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => setIsExpanded(false)}
-                    className="px-4 py-2 text-sm
-                    text-neutral-500 hover:text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsExpanded(false);
+                    }}
+                    className="px-2 sm:px-4 py-2 text-sm text-neutral-500 hover:text-white"
                   >
                     Close
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-sky-500 text-white px-4 py-2
-                    rounded-xl text-sm font-bold hover:bg-sky-400 disabled:opacity-50"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-sky-400 disabled:opacity-50"
                   >
-                    {loading ? "Saving..." : "Save"}
+                    {loading ? "..." : "Save"}
                   </button>
                 </div>
               </div>
@@ -153,16 +155,21 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
           </form>
         </div>
 
-        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+        {/* Dynamic Masonry Grid - 1 Column on phone, more on desktop */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 space-y-4 sm:space-y-6">
           {filteredNotes.map((note: Note) => (
             <NoteCard key={note._id} {...note} />
           ))}
         </div>
       </main>
 
+      {/* Floating Action Button - ONLY visible on Phone */}
       <button
-        className="fixed bottom-8 right-8 w-14 h-14 bg-sky-500 rounded-full flex items-center justify-center
-        shadow-2xl shadow-sky-500/40 hover:scale-110 transition-all sm:hidden z-50"
+        onClick={() => {
+          setIsExpanded(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-sky-500 rounded-full flex items-center justify-center shadow-2xl shadow-sky-500/40 hover:scale-110 transition-all sm:hidden z-50"
       >
         <Plus className="text-white w-8 h-8" />
       </button>
@@ -178,29 +185,26 @@ function NoteCard({
 }: Omit<Note, "_id">) {
   return (
     <div
-      className={`break-inside-avoid bg-neutral-900/40 border-t-4 ${color} border-x border-b border-white/5
-      rounded-2xl p-6 hover:bg-neutral-900/60 transition-all group shadow-lg`}
+      className={`break-inside-avoid bg-neutral-900/40 border-t-4 ${color} border-x border-b border-white/5 rounded-2xl p-4 sm:p-6 hover:bg-neutral-900/60 transition-all group shadow-lg`}
     >
       <div className="flex justify-between items-start mb-4">
         {title && (
-          <h3 className="text-lg font-semibold text-neutral-100 leading-tight">
+          <h3 className="text-base sm:text-lg font-semibold text-neutral-100 leading-tight">
             {title}
           </h3>
         )}
+        {/* Keep pin visible on phone for better UX, hover-only on desktop */}
         <Pin
           size={18}
-          className="opacity-0 group-hover:opacity-100 text-neutral-500 cursor-pointer"
+          className="opacity-100 sm:opacity-0 group-hover:opacity-100 text-neutral-500 cursor-pointer"
         />
       </div>
-      <p className="text-neutral-400 text-sm leading-relaxed mb-6 font-medium">
+      <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
         {content}
       </p>
       <div className="flex items-center justify-between">
         {tag ? (
-          <div
-            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider
-            text-neutral-500 bg-neutral-950/50 px-3 py-1.5 rounded-full border border-white/5"
-          >
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-950/50 px-3 py-1.5 rounded-full border border-white/5">
             <Tag size={12} /> {tag}
           </div>
         ) : (
@@ -208,7 +212,7 @@ function NoteCard({
         )}
         <MoreVertical
           size={18}
-          className="opacity-0 group-hover:opacity-100 text-neutral-500 cursor-pointer"
+          className="opacity-100 sm:opacity-0 group-hover:opacity-100 text-neutral-500 cursor-pointer"
         />
       </div>
     </div>
