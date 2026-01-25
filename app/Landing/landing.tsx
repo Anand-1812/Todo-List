@@ -46,6 +46,7 @@ const Landing = () => {
             <ArrowRight size={18} />
           </button>
           <button
+            onClick={() => navigate("/docs")}
             className="px-8 py-4 bg-neutral-900 border border-white/10 font-bold rounded-full
             hover:bg-neutral-800 transition-all cursor-pointer"
           >

@@ -1,6 +1,4 @@
-import AuthContext from "Context/Context";
-import { useContext } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 const BeforeLogin = () => {
   const navigate = useNavigate();

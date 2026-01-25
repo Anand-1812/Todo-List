@@ -94,7 +94,8 @@ const AfterLogin = ({ user }: { user: any }) => {
           />
           <button
             onClick={handleLogout}
-            className={`group flex items-center h-12 w-full rounded-xl text-red-400/80 hover:bg-red-500/10 transition-all ${!isOpen ? "justify-center" : "px-4 gap-4"}`}
+            className={`group flex items-center h-12 w-full rounded-xl text-red-400/80 hover:bg-red-500/10
+              transition-all cursor-pointer ${!isOpen ? "justify-center" : "px-4 gap-4"}`}
           >
             <LogOut size={22} />
             {isOpen && <span className="font-medium">Logout</span>}
@@ -103,7 +104,10 @@ const AfterLogin = ({ user }: { user: any }) => {
       </div>
 
       {/* 2. MOBILE BOTTOM BAR (Visible only on phone) */}
-      <div className="fixed bottom-0 left-0 w-full h-16 bg-neutral-900/90 backdrop-blur-xl border-t border-white/10 z-50 flex sm:hidden items-center justify-around px-2">
+      <div
+        className="fixed bottom-0 left-0 w-full h-16 bg-neutral-900/90 backdrop-blur-xl border-t
+        border-white/10 z-50 flex sm:hidden items-center justify-around px-2"
+      >
         <MobileNavItem to="/dashboard" icon={<House size={20} />} />
         <MobileNavItem to="/products" icon={<ShoppingCart size={20} />} />
         <MobileNavItem to="/orders" icon={<PackageSearch size={20} />} />

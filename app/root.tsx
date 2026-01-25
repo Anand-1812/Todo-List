@@ -5,16 +5,18 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import stylesheet from "./tailwind.css?url";
 import Navbar from "components/Navbar";
 import AuthContext from "Context/Context";
 import { useState } from "react";
+import { requireUserSession } from "./utils/auth.router";
+import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "stylesheet", href: stylesheet }, // ✅ Tailwind injected here
+  { rel: "stylesheet", href: stylesheet },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -27,19 +29,13 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-import { useLoaderData } from "react-router";
-import { requireUserSession } from "./utils/auth.router";
-import { Toaster } from "sonner";
-
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUserSession(request);
   return { user };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // get the user from the loader
   const { user } = useLoaderData<typeof loader>();
-  const isLoggedIn = !!user;
 
   return (
     <html lang="en">
@@ -49,11 +45,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-neutral-950 text-neutral-100 antialiased selection:bg-white selection:text-black">
         <AuthContext.Provider value={user}>
           <Navbar />
-          {children}
-          <Toaster position="top-right" richColors duration={2500} />
+
+          <div className="min-h-screen">{children}</div>
+
+          <Toaster
+            position="top-right"
+            theme="dark"
+            toastOptions={{
+              unstyled: true,
+              classNames: {
+                toast: `flex items-center gap-3 w-full max-w-sm p-4 bg-neutral-900/60
+                  backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl transition-all duration-300
+                `,
+                title: "text-sm font-semibold text-white",
+                description: "text-xs text-neutral-400",
+                success: "border-emerald-500/20 text-emerald-400",
+                error: "border-red-500/20 text-red-400",
+                info: "border-sky-500/20 text-sky-400",
+              },
+            }}
+          />
+
           <ScrollRestoration />
           <Scripts />
         </AuthContext.Provider>
@@ -83,11 +98,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <main className="pt-32 p-8 max-w-xl mx-auto text-center">
+      <h1 className="text-6xl font-bold text-white mb-4">{message}</h1>
+      <p className="text-neutral-500 text-lg mb-8">{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className="w-full p-6 bg-neutral-900 border border-white/5 rounded-2xl overflow-x-auto text-left text-xs text-neutral-400">
           <code>{stack}</code>
         </pre>
       )}
