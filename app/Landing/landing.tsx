@@ -25,7 +25,7 @@ const Landing = () => {
         </div>
 
         <h1
-          className="text-4xl md:text-8xl font-bold tracking-tighter bg-gradient-to-b from-white to-neutral-500
+          className="text-5xl md:text-8xl font-bold tracking-tighter bg-gradient-to-b from-white to-neutral-500
           bg-clip-text text-transparent leading-[1.1] max-w-6xl"
         >
           The minimal way to manage your thoughts.

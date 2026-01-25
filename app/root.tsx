@@ -45,13 +45,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-neutral-950 text-neutral-100 antialiased selection:bg-white selection:text-black">
+      <body className="bg-neutral-950 text-neutral-100 antialiased selection:bg-white selection:text-black selection:rounded-3xl">
         <AuthContext.Provider value={user}>
           <Navbar />
 
           <div className="min-h-screen">{children}</div>
 
           <Toaster
+            duration={2000}
             position="top-right"
             theme="dark"
             toastOptions={{

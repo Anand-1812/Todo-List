@@ -35,7 +35,8 @@ const AfterLogin = ({ user }: { user: any }) => {
     <>
       <div
         className={`fixed top-0 left-0 h-screen bg-neutral-900/80 backdrop-blur-xl z-50 hidden sm:flex flex-col
-          transition-all duration-500 ease-in-out border-r border-white/10 shadow-2xl ${isOpen ? "w-64" : "w-20"
+          transition-all duration-500 ease-in-out border-r border-white/10 shadow-2xl ${
+            isOpen ? "w-64" : "w-20"
           }`}
       >
         <div className="flex items-center justify-between h-20 px-5 border-b border-white/10 shrink-0">
