@@ -24,7 +24,7 @@ export default function Settings({
 }) {
   const { user } = loaderData;
 
-  // --- STATE MANAGEMENT ---
+  // --- STATE ---
   const [density, setDensity] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("note-density") || "comfortable";
@@ -70,12 +70,15 @@ export default function Settings({
 
   const handleExportData = async () => {
     const toastId = toast.loading("Preparing your data archive...");
+
+    // Artificial delay to make the export feel substantial
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     try {
-      // TODO: Replace with your actual notes fetch logic
       const mockData = {
         user: user.email,
         exportedAt: new Date(),
-        notes: [],
+        notes: [], // In production, fetch your actual notes here
       };
 
       const blob = new Blob([JSON.stringify(mockData, null, 2)], {
@@ -99,15 +102,30 @@ export default function Settings({
     const toastId = toast.loading("Archiving workspace...");
 
     try {
-      // TODO: Implement PATCH http://localhost:3001/api/notes/archive-all
-      toast.success("Workspace archived", { id: toastId });
+      // Promise.all ensures we wait for the API AND the minimum delay for good UX
+      const [res] = await Promise.all([
+        fetch("http://localhost:3001/api/notes/archive-all", {
+          method: "PATCH",
+          credentials: "include",
+        }),
+        new Promise((resolve) => setTimeout(resolve, 800)),
+      ]);
+
+      if (res.ok) {
+        toast.success("Workspace archived successfully", { id: toastId });
+      } else {
+        toast.error("Failed to archive notes", { id: toastId });
+      }
     } catch (error) {
-      toast.error("Archive failed", { id: toastId });
+      toast.error("Network error. Try again.", { id: toastId });
     }
   };
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
     try {
       const res = await fetch("http://localhost:3001/api/auth/", {
         method: "DELETE",
@@ -136,7 +154,6 @@ export default function Settings({
     "
     >
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
         <header className="mb-10 sm:mb-12">
           <h1
             className="
@@ -172,7 +189,6 @@ export default function Settings({
                   value={displayName}
                   onChange={(e: any) => setDisplayName(e.target.value)}
                 />
-
                 <div className="space-y-2">
                   <label
                     className="
@@ -193,7 +209,6 @@ export default function Settings({
                   />
                 </div>
               </div>
-
               <button
                 onClick={() => handleUpdateProfile(displayName)}
                 className="
@@ -223,7 +238,6 @@ export default function Settings({
                     Adjust the vertical spacing of your dashboard notes.
                   </p>
                 </div>
-
                 <div
                   className="
                   flex w-full sm:w-auto bg-neutral-950 p-1
@@ -291,18 +305,11 @@ export default function Settings({
                   Danger Zone
                 </h3>
               </div>
-
-              <div
-                className="
-                flex flex-col sm:flex-row sm:items-center
-                justify-between gap-4
-              "
-              >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <p className="text-sm text-neutral-400 max-w-sm leading-relaxed">
                   Permanently delete your account and all associated data. This
                   action is irreversible.
                 </p>
-
                 <button
                   onClick={() => setDeleteModalOpen(true)}
                   className="
@@ -346,11 +353,7 @@ function SettingHeader({ icon, title }: any) {
 function InputGroup({ label, value, onChange }: any) {
   return (
     <div className="space-y-2">
-      <label
-        className="
-        text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1
-      "
-      >
+      <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1">
         {label}
       </label>
       <input
@@ -378,7 +381,6 @@ function DataCard({ title, desc, action }: any) {
         <h4 className="text-white font-semibold mb-2">{title}</h4>
         <p className="text-sm text-neutral-500 leading-relaxed mb-6">{desc}</p>
       </div>
-
       <button
         onClick={action}
         className="

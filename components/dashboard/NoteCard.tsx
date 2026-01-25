@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Pin, MoreVertical, Pencil, Trash2, Tag } from "lucide-react";
+import { Pin, MoreVertical, Pencil, Trash2, Tag, Archive } from "lucide-react";
 
 interface NoteCardProps {
   note: any;
@@ -7,6 +7,7 @@ interface NoteCardProps {
   onDelete: () => void;
   onEdit: () => void;
   onPin: () => void;
+  onArchive: () => void; // New prop
 }
 
 export default function NoteCard({
@@ -15,6 +16,7 @@ export default function NoteCard({
   onDelete,
   onEdit,
   onPin,
+  onArchive,
 }: NoteCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export default function NoteCard({
           }}
           className={`
             cursor-pointer transition-all duration-200
-            ${isPinned ? "text-sky-400 fill-sky-400" : "text-neutral-500 opacity-0 group-hover:opacity-100"}
+            ${isPinned ? "text-sky-400 fill-sky-400" : "text-neutral-500 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"}
             ${isCompact ? "w-3.5 h-3.5" : "w-[18px] h-[18px]"}
           `}
         />
@@ -93,7 +95,7 @@ export default function NoteCard({
             onClick={() => setShowMenu(!showMenu)}
             className="
               p-1 text-neutral-500 hover:text-white cursor-pointer
-              opacity-0 group-hover:opacity-100 transition-opacity
+              opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity
             "
           >
             <MoreVertical size={isCompact ? 14 : 18} />
@@ -102,7 +104,7 @@ export default function NoteCard({
           {showMenu && (
             <div
               className="
-              absolute right-0 bottom-full mb-2 w-32 z-40
+              absolute right-0 bottom-full mb-2 w-36 z-40
               bg-neutral-900 border border-white/10 rounded-xl
               shadow-2xl backdrop-blur-xl overflow-hidden
             "
@@ -112,22 +114,27 @@ export default function NoteCard({
                   onEdit();
                   setShowMenu(false);
                 }}
-                className="
-                  w-full flex items-center gap-3 px-4 py-3 text-xs
-                  text-neutral-300 hover:bg-white/5 cursor-pointer
-                "
+                className="w-full flex items-center gap-3 px-4 py-3 text-xs text-neutral-300 hover:bg-white/5 cursor-pointer"
               >
                 <Pencil size={14} /> Edit
               </button>
+
+              <button
+                onClick={() => {
+                  onArchive();
+                  setShowMenu(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-xs text-neutral-300 hover:bg-white/5 cursor-pointer"
+              >
+                <Archive size={14} /> Archive
+              </button>
+
               <button
                 onClick={() => {
                   onDelete();
                   setShowMenu(false);
                 }}
-                className="
-                  w-full flex items-center gap-3 px-4 py-3 text-xs
-                  text-red-400 hover:bg-red-500/10 cursor-pointer
-                "
+                className="w-full flex items-center gap-3 px-4 py-3 text-xs text-red-400 hover:bg-red-500/10 cursor-pointer"
               >
                 <Trash2 size={14} /> Delete
               </button>
