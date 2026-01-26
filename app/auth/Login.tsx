@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 const Login = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL!;
 
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });

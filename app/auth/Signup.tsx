@@ -81,7 +81,7 @@ const Signup = () => {
               name="name"
               value={user.name}
               onChange={handleChange}
-              placeholder="Anand Kumar"
+              placeholder="Your Name"
               className="w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3.5 text-neutral-100 outline-none
               focus:ring-2 focus:ring-sky-500/40 transition-all placeholder:text-neutral-700"
               required

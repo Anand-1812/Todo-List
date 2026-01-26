@@ -27,7 +27,7 @@ const AfterLogin = ({ user }: { user: any }) => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${apiUrl}api/auth/logout`, {
+      const res = await fetch(`${apiUrl}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
