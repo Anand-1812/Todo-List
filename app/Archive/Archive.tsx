@@ -12,6 +12,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Archives({ loaderData }: Route.ComponentProps) {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   if (!loaderData) return null;
   const { user, notes } = loaderData;
 
@@ -33,7 +35,7 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
 
     try {
       const [res] = await Promise.all([
-        fetch(`http://localhost:3001/api/notes/${id}/restore`, {
+        fetch(`${apiUrl}/api/notes/${id}/restore`, {
           method: "PATCH",
           credentials: "include",
         }),
@@ -59,7 +61,7 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
     const toastId = toast.loading("Purging from vault...");
 
     try {
-      const res = await fetch(`http://localhost:3001/api/notes/${id}`, {
+      const res = await fetch(`${apiUrl}/api/notes/${id}`, {
         method: "DELETE",
         credentials: "include",
       });

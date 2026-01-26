@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router";
 import { toast } from "sonner";
 
 const Signup = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
@@ -25,7 +27,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/signup", {
+      const res = await fetch(`${apiUrl}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

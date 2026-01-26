@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
 
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // Validates the session and returns the user object if authenticated.
 export async function requireUserSession(request: Request) {

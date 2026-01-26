@@ -17,6 +17,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   if (!loaderData) return null;
   const { user, notes } = loaderData;
   const revalidator = useRevalidator();
@@ -54,7 +56,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
     const toastId = toast.loading("Moving to vault...");
     try {
       const [res] = await Promise.all([
-        fetch(`http://localhost:3001/api/notes/${id}/archive`, {
+        fetch(`${apiUrl}/api/notes/${id}/archive`, {
           method: "PATCH",
           credentials: "include",
         }),
@@ -72,7 +74,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
   const handleTogglePin = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/notes/${id}/pin`, {
+      const res = await fetch(`${apiUrl}/api/notes/${id}/pin`, {
         method: "PATCH",
         credentials: "include",
       });
@@ -97,13 +99,10 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
     if (!noteToDelete) return;
     setDeleteLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:3001/api/notes/${noteToDelete}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
+      const res = await fetch(`${apiUrl}/api/notes/${noteToDelete}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       if (res.ok) {
         toast.success("Note removed");
         setNoteToDelete(null);

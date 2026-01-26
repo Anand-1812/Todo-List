@@ -23,6 +23,7 @@ export default function Settings({
   loaderData: { user: any };
 }) {
   const { user } = loaderData;
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // --- STATE ---
   const [density, setDensity] = useState(() => {
@@ -43,7 +44,7 @@ export default function Settings({
     const currToast = toast.loading("Updating profile...");
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/profile", {
+      const res = await fetch("${apiUrl}/api/auth/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newName }),
@@ -104,7 +105,7 @@ export default function Settings({
     try {
       // Promise.all ensures we wait for the API AND the minimum delay for good UX
       const [res] = await Promise.all([
-        fetch("http://localhost:3001/api/notes/archive-all", {
+        fetch("${apiUrl}/api/notes/archive-all", {
           method: "PATCH",
           credentials: "include",
         }),
@@ -127,7 +128,7 @@ export default function Settings({
     await new Promise((resolve) => setTimeout(resolve, 1200));
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/", {
+      const res = await fetch("${apiUrl}/api/auth/", {
         method: "DELETE",
         credentials: "include",
       });
