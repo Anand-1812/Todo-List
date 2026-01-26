@@ -6,7 +6,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
 export async function requireUserSession(request: Request) {
   const cookie = request.headers.get("cookie");
   try {
-    const res = await fetch(`${API_BASE}/auth/me`, {
+    const res = await fetch(`${API_BASE}/api/auth/me`, {
       headers: { Cookie: cookie || "" },
     });
     if (!res.ok) return null;
@@ -29,7 +29,7 @@ export async function requireAuth(request: Request) {
 export async function getUserNotes(request: Request) {
   const cookie = request.headers.get("cookie");
   try {
-    const res = await fetch(`${API_BASE}/notes`, {
+    const res = await fetch(`${API_BASE}/api/notes`, {
       headers: { Cookie: cookie || "" },
     });
     return res.ok ? await res.json() : [];
@@ -43,7 +43,7 @@ export async function getUserNotes(request: Request) {
 export async function getArchivedNotes(request: Request) {
   const cookie = request.headers.get("cookie");
   try {
-    const res = await fetch(`${API_BASE}/notes/archived`, {
+    const res = await fetch(`${API_BASE}/api/notes/archived`, {
       headers: { Cookie: cookie || "" },
     });
 
