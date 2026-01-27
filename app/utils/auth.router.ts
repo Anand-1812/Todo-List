@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
 
-const VITE_API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 const API_BASE = `${VITE_API_URL}/api`;
 
 export async function requireUserSession(request: Request) {
