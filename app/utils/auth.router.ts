@@ -1,13 +1,26 @@
 import { redirect } from "react-router";
 
-// Standardize the API base path to prevent // double slashes
 const VITE_API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
 const API_BASE = `${VITE_API_URL}/api`;
 
 export async function requireUserSession(request: Request) {
+  if (typeof document !== "undefined") {
+    try {
+      const res = await fetch(`${API_BASE}/auth/me`, {
+        credentials: "include",
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.user;
+    } catch {
+      return null;
+    }
+  }
+
+  const cookie = request.headers.get("cookie");
   try {
     const res = await fetch(`${API_BASE}/auth/me`, {
-      credentials: "include",
+      headers: { Cookie: cookie || "" },
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -24,11 +37,14 @@ export async function requireAuth(request: Request) {
 }
 
 export async function getUserNotes(request: Request) {
-  const cookie = request.headers.get("cookie");
+  const isBrowser = typeof document !== "undefined";
+  const options: RequestInit = {
+    credentials: isBrowser ? "include" : "omit",
+    headers: isBrowser ? {} : { Cookie: request.headers.get("cookie") || "" },
+  };
+
   try {
-    const res = await fetch(`${API_BASE}/notes`, {
-      headers: { Cookie: cookie || "" },
-    });
+    const res = await fetch(`${API_BASE}/notes`, options);
     return res.ok ? await res.json() : [];
   } catch {
     return [];
@@ -36,11 +52,14 @@ export async function getUserNotes(request: Request) {
 }
 
 export async function getArchivedNotes(request: Request) {
-  const cookie = request.headers.get("cookie");
+  const isBrowser = typeof document !== "undefined";
+  const options: RequestInit = {
+    credentials: isBrowser ? "include" : "omit",
+    headers: isBrowser ? {} : { Cookie: request.headers.get("cookie") || "" },
+  };
+
   try {
-    const res = await fetch(`${API_BASE}/notes/archived`, {
-      headers: { Cookie: cookie || "" },
-    });
+    const res = await fetch(`${API_BASE}/notes/archived`, options);
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data : [];

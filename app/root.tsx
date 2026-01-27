@@ -11,7 +11,6 @@ import type { Route } from "./+types/root";
 import stylesheet from "./tailwind.css?url";
 import Navbar from "components/Navbar";
 import AuthContext from "Context/Context";
-import { useState } from "react";
 import { requireUserSession } from "./utils/auth.router";
 import { Toaster } from "sonner";
 
@@ -29,13 +28,17 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = await requireUserSession(request);
   return { user };
 }
 
+export function HydrateFallback() {
+  return <div className="min-h-screen bg-neutral-950" />;
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof clientLoader>();
 
   return (
     <html lang="en">

@@ -10,10 +10,14 @@ import NoteCard from "components/dashboard/NoteCard";
 import DeleteModal from "components/dashboard/DeleteModal";
 import EmptyState from "components/dashboard/EmptyState";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = await requireAuth(request);
   const notes = await getUserNotes(request);
   return { user, notes };
+}
+
+export function HydrateFallback() {
+  return <div className="min-h-screen bg-neutral-950" />;
 }
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
@@ -39,7 +43,6 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // Listen for density changes from Settings tab
   useEffect(() => {
     const handleSync = () => {
       setDensity(localStorage.getItem("note-density") || "comfortable");
@@ -156,8 +159,9 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
             setLoading(true);
             const method = editingNoteId ? "PATCH" : "POST";
             const url = editingNoteId
-              ? `http://localhost:3001/api/notes/${editingNoteId}`
-              : "http://localhost:3001/api/notes";
+              ? `${apiUrl}/api/notes/${editingNoteId}`
+              : `${apiUrl}/api/notes`;
+
             const res = await fetch(url, {
               method,
               headers: { "Content-Type": "application/json" },
