@@ -5,10 +5,9 @@ const VITE_API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
 const API_BASE = `${VITE_API_URL}/api`;
 
 export async function requireUserSession(request: Request) {
-  const cookie = request.headers.get("cookie");
   try {
     const res = await fetch(`${API_BASE}/auth/me`, {
-      headers: { Cookie: cookie || "" },
+      credentials: "include",
     });
     if (!res.ok) return null;
     const data = await res.json();
