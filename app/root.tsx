@@ -28,17 +28,37 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// ✅ Keep clientLoader for browser-side auth
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = await requireUserSession(request);
   return { user };
 }
 
+// ✅ ADDED: HydrateFallback prevents the UI from flickering/crashing while clientLoader runs
 export function HydrateFallback() {
-  return <div className="min-h-screen bg-neutral-950" />;
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body className="bg-neutral-950 text-neutral-100">
+        {/* Simple loading state */}
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        </div>
+        <Scripts />
+      </body>
+    </html>
+  );
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { user } = useLoaderData<typeof clientLoader>();
+  // ✅ FIX: Safely access data. During Server Render, 'data' will be undefined.
+  const data = useLoaderData<typeof clientLoader>();
+  const user = data?.user;
 
   return (
     <html lang="en">
@@ -49,7 +69,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-neutral-950 text-neutral-100 antialiased selection:bg-white selection:text-black selection:rounded-3xl">
-        <AuthContext.Provider value={user}>
+        {/* Pass 'user' safely. If undefined, Context should handle it (or passed as null) */}
+        <AuthContext.Provider value={user as any}>
           <Navbar />
 
           <div className="min-h-screen">{children}</div>
@@ -102,14 +123,25 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-32 p-8 max-w-xl mx-auto text-center">
-      <h1 className="text-6xl font-bold text-white mb-4">{message}</h1>
-      <p className="text-neutral-500 text-lg mb-8">{details}</p>
-      {stack && (
-        <pre className="w-full p-6 bg-neutral-900 border border-white/5 rounded-2xl overflow-x-auto text-left text-xs text-neutral-400">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body className="bg-neutral-950 text-white">
+        <main className="pt-32 p-8 max-w-xl mx-auto text-center">
+          <h1 className="text-6xl font-bold text-white mb-4">{message}</h1>
+          <p className="text-neutral-500 text-lg mb-8">{details}</p>
+          {stack && (
+            <pre className="w-full p-6 bg-neutral-900 border border-white/5 rounded-2xl overflow-x-auto text-left text-xs text-neutral-400">
+              <code>{stack}</code>
+            </pre>
+          )}
+        </main>
+        <Scripts />
+      </body>
+    </html>
   );
 }
