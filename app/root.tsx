@@ -29,16 +29,16 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// ✅ UPDATED: Added a small delay to prevent the "instant flash" glitch
+// Keep the delay to ensure the animation plays smoothly
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const [user] = await Promise.all([
     requireUserSession(request),
-    new Promise((resolve) => setTimeout(resolve, 1000)), // 1s delay for smooth intro
+    new Promise((resolve) => setTimeout(resolve, 1000)),
   ]);
   return { user };
 }
 
-// ✅ UPDATED: Fixed alignment to ensure it is perfectly centered
+// ✅ FIXED: Uses 'fixed inset-0' to force centering over the entire viewport
 export function HydrateFallback() {
   return (
     <html lang="en">
@@ -48,26 +48,28 @@ export function HydrateFallback() {
         <Meta />
         <Links />
       </head>
-      <body className="h-screen w-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-center overflow-hidden selection:bg-white selection:text-black">
-        <div className="flex flex-col items-center gap-6 animate-pulse">
-          <div className="relative">
-            {/* Outer static ring */}
-            <div className="w-12 h-12 border-2 border-white/5 rounded-full" />
-            {/* Inner spinning accent */}
-            <div className="absolute inset-0 w-12 h-12 border-t-2 border-sky-400 rounded-full animate-spin" />
-          </div>
-
-          <div className="flex flex-col items-center gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] text-neutral-500 uppercase tracking-widest">
-              <Sparkles size={10} className="text-sky-400" />
-              <span>SideInk</span>
+      <body className="bg-neutral-950 text-neutral-100 overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-neutral-950">
+          <div className="flex flex-col items-center gap-6 animate-pulse">
+            <div className="relative">
+              {/* Outer static ring */}
+              <div className="w-12 h-12 border-2 border-white/5 rounded-full" />
+              {/* Inner spinning accent */}
+              <div className="absolute inset-0 w-12 h-12 border-t-2 border-sky-400 rounded-full animate-spin" />
             </div>
-            <h2 className="text-xl font-bold tracking-tight bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent">
-              Welcome to the site
-            </h2>
-            <p className="text-xs font-mono text-neutral-500 uppercase tracking-widest">
-              Preparing your workspace...
-            </p>
+
+            <div className="flex flex-col items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] text-neutral-500 uppercase tracking-widest">
+                <Sparkles size={10} className="text-sky-400" />
+                <span>SideInk</span>
+              </div>
+              <h2 className="text-xl font-bold tracking-tight bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent">
+                Welcome to the site
+              </h2>
+              <p className="text-xs font-mono text-neutral-500 uppercase tracking-widest">
+                Preparing your workspace...
+              </p>
+            </div>
           </div>
         </div>
         <Scripts />
@@ -77,7 +79,6 @@ export function HydrateFallback() {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Safely access data; during initial SSR, data may be undefined
   const data = useLoaderData<typeof clientLoader>();
   const user = data?.user;
 
