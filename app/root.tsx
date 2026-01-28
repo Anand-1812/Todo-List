@@ -13,6 +13,7 @@ import Navbar from "components/Navbar";
 import AuthContext from "Context/Context";
 import { requireUserSession } from "./utils/auth.router";
 import { Toaster } from "sonner";
+import { Sparkles } from "lucide-react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -28,13 +29,13 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// ✅ Keep clientLoader for browser-side auth
+// Keep clientLoader for browser-side auth check
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = await requireUserSession(request);
   return { user };
 }
 
-// ✅ ADDED: HydrateFallback prevents the UI from flickering/crashing while clientLoader runs
+// Custom fallback that shows while clientLoader is initializing
 export function HydrateFallback() {
   return (
     <html lang="en">
@@ -44,10 +45,27 @@ export function HydrateFallback() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-neutral-950 text-neutral-100">
-        {/* Simple loading state */}
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <body className="bg-neutral-950 text-neutral-100 flex items-center justify-center min-h-screen selection:bg-white selection:text-black">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+          <div className="relative">
+            {/* Outer static ring */}
+            <div className="w-12 h-12 border-2 border-white/5 rounded-full" />
+            {/* Inner spinning accent */}
+            <div className="absolute inset-0 w-12 h-12 border-t-2 border-sky-400 rounded-full animate-spin" />
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] text-neutral-500 uppercase tracking-widest">
+              <Sparkles size={10} className="text-sky-400" />
+              <span>Rice UI System</span>
+            </div>
+            <h2 className="text-xl font-bold tracking-tight bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent">
+              Welcome to the site
+            </h2>
+            <p className="text-xs font-mono text-neutral-500 uppercase tracking-widest">
+              Preparing your workspace...
+            </p>
+          </div>
         </div>
         <Scripts />
       </body>
@@ -56,7 +74,7 @@ export function HydrateFallback() {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // ✅ FIX: Safely access data. During Server Render, 'data' will be undefined.
+  // Safely access data; during initial SSR, data may be undefined
   const data = useLoaderData<typeof clientLoader>();
   const user = data?.user;
 
@@ -69,7 +87,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-neutral-950 text-neutral-100 antialiased selection:bg-white selection:text-black selection:rounded-3xl">
-        {/* Pass 'user' safely. If undefined, Context should handle it (or passed as null) */}
         <AuthContext.Provider value={user as any}>
           <Navbar />
 
