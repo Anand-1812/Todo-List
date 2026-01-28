@@ -47,8 +47,7 @@ const AfterLogin = ({ user }: { user: any }) => {
       {/* 1. DESKTOP SIDEBAR */}
       <div
         className={`fixed top-0 left-0 h-screen bg-neutral-900/80 backdrop-blur-xl z-50 hidden sm:flex flex-col
-          transition-all duration-500 ease-in-out border-r border-white/10 shadow-2xl ${
-            isOpen ? "w-64" : "w-20"
+          transition-all duration-500 ease-in-out border-r border-white/10 shadow-2xl ${isOpen ? "w-64" : "w-20"
           }`}
       >
         <div className="flex items-center justify-between h-20 px-5 border-b border-white/10 shrink-0">
@@ -58,7 +57,7 @@ const AfterLogin = ({ user }: { user: any }) => {
               onClick={() => navigate("/dashboard")}
             >
               <span className="text-white font-semibold tracking-tight truncate">
-                Notes App
+                Side Ink
               </span>
               <span className="text-[10px] text-neutral-400 truncate w-32">
                 {user?.email}
@@ -67,9 +66,8 @@ const AfterLogin = ({ user }: { user: any }) => {
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 rounded-xl hover:bg-white/5 text-neutral-400 hover:text-white transition-all cursor-pointer ${
-              !isOpen ? "mx-auto" : ""
-            }`}
+            className={`p-2 rounded-xl hover:bg-white/5 text-neutral-400 hover:text-white transition-all cursor-pointer ${!isOpen ? "mx-auto" : ""
+              }`}
           >
             {isOpen ? (
               <PanelRightOpen size={20} />
@@ -104,8 +102,7 @@ const AfterLogin = ({ user }: { user: any }) => {
           <button
             onClick={handleLogout}
             className={`group flex items-center h-12 w-full rounded-xl text-red-400/80 hover:bg-red-500/10
-              transition-all cursor-pointer ${
-                !isOpen ? "justify-center" : "px-4 gap-4"
+              transition-all cursor-pointer ${!isOpen ? "justify-center" : "px-4 gap-4"
               }`}
           >
             <LogOut size={22} />
@@ -137,10 +134,9 @@ function NavItem({ to, title, icon, isOpen }: any) {
       className={({ isActive }) => `
         flex items-center h-12 w-full rounded-xl transition-all duration-200
         ${!isOpen ? "justify-center" : "px-4 gap-4"}
-        ${
-          isActive
-            ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
-            : "text-neutral-400 hover:bg-white/5 hover:text-neutral-100"
+        ${isActive
+          ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
+          : "text-neutral-400 hover:bg-white/5 hover:text-neutral-100"
         }
       `}
     >
@@ -162,10 +158,9 @@ function MobileNavItem({ to, icon }: any) {
       to={to}
       className={({ isActive }) => `
         p-3 rounded-2xl transition-all
-        ${
-          isActive
-            ? "text-sky-400 bg-sky-500/10 shadow-[0_0_15px_rgba(56,189,248,0.2)]"
-            : "text-neutral-400"
+        ${isActive
+          ? "text-sky-400 bg-sky-500/10 shadow-[0_0_15px_rgba(56,189,248,0.2)]"
+          : "text-neutral-400"
         }
       `}
     >

@@ -50,7 +50,7 @@ export default function Docs() {
             className="text-5xl md:text-6xl font-bold text-white tracking-tighter
             mb-4"
           >
-            NotesApp Documentation
+            SideInk documentation
           </h1>
 
           <p

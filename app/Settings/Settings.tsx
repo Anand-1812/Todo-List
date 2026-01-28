@@ -67,19 +67,46 @@ export default function Settings({
 
   const handleExportData = async () => {
     const toastId = toast.loading("Preparing your data archive...");
+
     try {
-      const mockData = { user: user.email, exportedAt: new Date(), notes: [] };
-      const blob = new Blob([JSON.stringify(mockData, null, 2)], {
+      // 1. Fetch real data from the backend
+      const res = await fetch(`${apiUrl}/api/notes/export`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const realNotes = await res.json();
+
+      // 2. Construct the export object with REAL notes
+      const exportData = {
+        user: user.email,
+        exportedAt: new Date().toISOString(),
+        totalNotes: realNotes.length,
+        notes: realNotes, // <--- Actual data from MongoDB
+      };
+
+      // 3. Create and trigger download
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
         type: "application/json",
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
+
       link.href = url;
       link.download = `rice-notes-${user.name.toLowerCase().replace(/\s+/g, "-")}.json`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
       toast.success("Data exported successfully", { id: toastId });
     } catch (error) {
-      toast.error("Export failed", { id: toastId });
+      console.error("Export error:", error);
+      toast.error("Failed to export notes", { id: toastId });
     }
   };
 
