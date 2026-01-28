@@ -4,6 +4,7 @@ const VITE_API_URL = import.meta.env.VITE_API_URL;
 const API_BASE = `${VITE_API_URL}/api`;
 
 export async function requireUserSession(request: Request) {
+  // If in browser context, use credentials: "include" for automatic cookie handling
   if (typeof document !== "undefined") {
     try {
       const res = await fetch(`${API_BASE}/auth/me`, {
@@ -17,6 +18,7 @@ export async function requireUserSession(request: Request) {
     }
   }
 
+  // If in server context, manually pass cookies in headers
   const cookie = request.headers.get("cookie");
   try {
     const res = await fetch(`${API_BASE}/auth/me`, {

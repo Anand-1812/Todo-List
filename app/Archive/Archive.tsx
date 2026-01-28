@@ -3,9 +3,10 @@ import { useRevalidator, useNavigate } from "react-router";
 import { ArchiveRestore, Trash2, ArrowLeft, Inbox } from "lucide-react";
 import { toast } from "sonner";
 import { requireAuth, getArchivedNotes } from "~/utils/auth.router";
-import type { Route } from "./+types/Archive";
+import type { Route } from "../Dashboard/+types/Dashboard";
 
-export async function loader({ request }: Route.LoaderArgs) {
+// Use clientLoader to fix redirection loops by ensuring browser cookies are used
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = await requireAuth(request);
   const notes = await getArchivedNotes(request);
   return { user, notes };
@@ -21,7 +22,6 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
   const navigate = useNavigate();
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  // Sync density preference
   const [density, setDensity] = useState("comfortable");
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
     const toastId = toast.loading("Restoring note...");
 
     try {
-      // Removed artificial timeout to eliminate interaction lag
+      // Removed artificial delay to eliminate lag
       const res = await fetch(`${apiUrl}/api/notes/${id}/restore`, {
         method: "PATCH",
         credentials: "include",
@@ -82,26 +82,13 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
   const isCompact = density === "compact";
 
   return (
-    <div
-      className="
-      min-h-screen bg-neutral-950 text-neutral-100
-      pl-0 sm:pl-20 transition-all duration-300
-    "
-    >
-      <header
-        className="
-        sticky top-0 z-30 px-4 sm:px-8 py-6
-        bg-neutral-950/60 backdrop-blur-xl border-b border-white/5
-      "
-      >
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 pl-0 sm:pl-20 transition-all duration-300">
+      <header className="sticky top-0 z-30 px-4 sm:px-8 py-6 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/dashboard")}
-              className="
-                p-2 hover:bg-white/5 rounded-xl text-neutral-500
-                hover:text-white transition-all cursor-pointer
-              "
+              className="p-2 hover:bg-white/5 rounded-xl text-neutral-500 hover:text-white transition-all cursor-pointer"
             >
               <ArrowLeft size={20} />
             </button>
@@ -115,53 +102,27 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
 
       <main className="max-w-7xl mx-auto p-6 sm:p-12 pb-24 sm:pb-12">
         {notes && notes.length > 0 ? (
-          <div
-            className="
-            columns-1 sm:columns-2 lg:columns-3 xl:columns-4
-            gap-6 space-y-6
-          "
-          >
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
             {notes.map((note: any) => (
               <div
                 key={note._id}
-                className={`
-                break-inside-avoid bg-neutral-900/40 border border-white/5
-                rounded-2xl hover:bg-neutral-900/60 transition-all group
-                relative overflow-hidden
-                ${isCompact ? "p-3 mb-3" : "p-6 mb-6"}
-              `}
+                className={`break-inside-avoid bg-neutral-900/40 border border-white/5 rounded-2xl hover:bg-neutral-900/60 transition-all group relative overflow-hidden ${isCompact ? "p-3 mb-3" : "p-6 mb-6"}`}
               >
                 <h3
-                  className={`
-                  font-semibold text-neutral-200 mb-2 truncate
-                  ${isCompact ? "text-sm" : "text-lg"}
-                `}
+                  className={`font-semibold text-neutral-200 mb-2 truncate ${isCompact ? "text-sm" : "text-lg"}`}
                 >
                   {note.title}
                 </h3>
                 <p
-                  className={`
-                  text-neutral-500 leading-relaxed line-clamp-4
-                  ${isCompact ? "text-[11px] mb-3" : "text-sm mb-6"}
-                `}
+                  className={`text-neutral-500 leading-relaxed line-clamp-4 ${isCompact ? "text-[11px] mb-3" : "text-sm mb-6"}`}
                 >
                   {note.content}
                 </p>
-
-                <div
-                  className="
-                  flex items-center justify-end gap-2
-                  border-t border-white/5 pt-4
-                "
-                >
+                <div className="flex items-center justify-end gap-2 border-t border-white/5 pt-4">
                   <button
                     onClick={() => handleRestore(note._id)}
                     disabled={!!loadingId}
-                    className="
-                      p-2 text-neutral-400 hover:text-sky-400 hover:bg-sky-500/10
-                      rounded-lg transition-all cursor-pointer
-                      opacity-100 sm:opacity-0 sm:group-hover:opacity-100
-                    "
+                    className="p-2 text-neutral-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     title="Restore"
                   >
                     <ArchiveRestore
@@ -172,11 +133,7 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
                   <button
                     onClick={() => handleDeleteForever(note._id)}
                     disabled={!!loadingId}
-                    className="
-                      p-2 text-neutral-400 hover:text-red-400 hover:bg-red-500/10
-                      rounded-lg transition-all cursor-pointer
-                      opacity-100 sm:opacity-0 sm:group-hover:opacity-100
-                    "
+                    className="p-2 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     title="Delete Forever"
                   >
                     <Trash2 size={isCompact ? 16 : 18} />
@@ -187,12 +144,7 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div
-              className="
-              w-16 h-16 bg-neutral-900 rounded-3xl flex
-              items-center justify-center mb-6 border border-white/5
-            "
-            >
+            <div className="w-16 h-16 bg-neutral-900 rounded-3xl flex items-center justify-center mb-6 border border-white/5">
               <Inbox size={28} className="text-neutral-700" />
             </div>
             <h2 className="text-white font-bold text-xl mb-2">
