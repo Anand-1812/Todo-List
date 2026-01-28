@@ -23,7 +23,8 @@ export default function Settings({
   loaderData: { user: any };
 }) {
   const { user } = loaderData;
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // SAFE URL: Strip trailing slash to prevent double-slash errors in fetch
+  const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
   const [density, setDensity] = useState("comfortable");
   useEffect(() => {
@@ -76,6 +77,8 @@ export default function Settings({
       });
 
       if (!res.ok) {
+        // Log status to help debug if it fails again
+        console.error(`Export failed with status: ${res.status}`);
         throw new Error("Failed to fetch data");
       }
 
@@ -86,7 +89,7 @@ export default function Settings({
         user: user.email,
         exportedAt: new Date().toISOString(),
         totalNotes: realNotes.length,
-        notes: realNotes, // <--- Actual data from MongoDB
+        notes: realNotes,
       };
 
       // 3. Create and trigger download
@@ -115,7 +118,6 @@ export default function Settings({
     const toastId = toast.loading("Archiving workspace...");
 
     try {
-      // Removed artificial delay to eliminate lag
       const res = await fetch(`${apiUrl}/api/notes/archive-all`, {
         method: "PATCH",
         credentials: "include",
