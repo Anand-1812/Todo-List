@@ -3,7 +3,7 @@ import { useRevalidator, useNavigate } from "react-router";
 import { ArchiveRestore, Trash2, ArrowLeft, Inbox } from "lucide-react";
 import { toast } from "sonner";
 import { requireAuth, getArchivedNotes } from "~/utils/auth.router";
-import type { Route } from "../Dashboard/+types/Dashboard";
+import type { Route } from "./+types/Archive";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAuth(request);
@@ -34,20 +34,20 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
     const toastId = toast.loading("Restoring note...");
 
     try {
-      const [res] = await Promise.all([
-        fetch(`${apiUrl}/api/notes/${id}/restore`, {
-          method: "PATCH",
-          credentials: "include",
-        }),
-        new Promise((resolve) => setTimeout(resolve, 800)),
-      ]);
+      // Removed artificial timeout to eliminate interaction lag
+      const res = await fetch(`${apiUrl}/api/notes/${id}/restore`, {
+        method: "PATCH",
+        credentials: "include",
+      });
 
       if (res.ok) {
         toast.success("Note restored to dashboard", { id: toastId });
         revalidator.revalidate();
+      } else {
+        toast.error("Failed to restore", { id: toastId });
       }
     } catch (error) {
-      toast.error("Failed to restore", { id: toastId });
+      toast.error("Network error", { id: toastId });
     } finally {
       setLoadingId(null);
     }
@@ -69,9 +69,11 @@ export default function Archives({ loaderData }: Route.ComponentProps) {
       if (res.ok) {
         toast.success("Note deleted permanently", { id: toastId });
         revalidator.revalidate();
+      } else {
+        toast.error("Deletion failed", { id: toastId });
       }
     } catch (error) {
-      toast.error("Deletion failed", { id: toastId });
+      toast.error("Network error", { id: toastId });
     } finally {
       setLoadingId(null);
     }

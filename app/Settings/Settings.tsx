@@ -5,7 +5,6 @@ import {
   Download,
   ChevronRight,
   AlertTriangle,
-  BadgeCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { requireAuth } from "~/utils/auth.router";
@@ -26,12 +25,12 @@ export default function Settings({
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // --- STATE ---
-  const [density, setDensity] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("note-density") || "comfortable";
-    }
-    return "comfortable";
-  });
+  const [density, setDensity] = useState("comfortable");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("note-density") || "comfortable";
+    setDensity(saved);
+  }, []);
 
   const [displayName, setDisplayName] = useState(user?.name || "");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -44,7 +43,8 @@ export default function Settings({
     const currToast = toast.loading("Updating profile...");
 
     try {
-      const res = await fetch("${apiUrl}/api/auth/profile", {
+      // FIXED: Used backticks for variable injection
+      const res = await fetch(`${apiUrl}/api/auth/profile`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newName }),
@@ -72,14 +72,11 @@ export default function Settings({
   const handleExportData = async () => {
     const toastId = toast.loading("Preparing your data archive...");
 
-    // Artificial delay to make the export feel substantial
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     try {
       const mockData = {
         user: user.email,
         exportedAt: new Date(),
-        notes: [], // In production, fetch your actual notes here
+        notes: [],
       };
 
       const blob = new Blob([JSON.stringify(mockData, null, 2)], {
@@ -103,14 +100,11 @@ export default function Settings({
     const toastId = toast.loading("Archiving workspace...");
 
     try {
-      // Promise.all ensures we wait for the API AND the minimum delay for good UX
-      const [res] = await Promise.all([
-        fetch("${apiUrl}/api/notes/archive-all", {
-          method: "PATCH",
-          credentials: "include",
-        }),
-        new Promise((resolve) => setTimeout(resolve, 800)),
-      ]);
+      // FIXED: Used backticks for variable injection
+      const res = await fetch(`${apiUrl}/api/notes/archive-all`, {
+        method: "PATCH",
+        credentials: "include",
+      });
 
       if (res.ok) {
         toast.success("Workspace archived successfully", { id: toastId });
@@ -125,10 +119,9 @@ export default function Settings({
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-
     try {
-      const res = await fetch("${apiUrl}/api/auth/", {
+      // FIXED: Used backticks for variable injection
+      const res = await fetch(`${apiUrl}/api/auth/`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -175,7 +168,6 @@ export default function Settings({
         </header>
 
         <div className="space-y-10 sm:space-y-12">
-          {/* Account Profile */}
           <section>
             <SettingHeader icon={<User size={18} />} title="Account Profile" />
             <div
@@ -223,7 +215,6 @@ export default function Settings({
             </div>
           </section>
 
-          {/* Workspace Density */}
           <section>
             <SettingHeader icon={<Monitor size={18} />} title="Workspace" />
             <div
@@ -267,7 +258,6 @@ export default function Settings({
             </div>
           </section>
 
-          {/* Data Portability */}
           <section>
             <SettingHeader
               icon={<Download size={18} />}
@@ -292,7 +282,6 @@ export default function Settings({
             </div>
           </section>
 
-          {/* Danger Zone */}
           <section className="pt-8 border-t border-white/5">
             <div
               className="
@@ -337,8 +326,6 @@ export default function Settings({
     </div>
   );
 }
-
-// --- SUB-COMPONENTS ---
 
 function SettingHeader({ icon, title }: any) {
   return (
