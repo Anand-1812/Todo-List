@@ -15,10 +15,10 @@ const BeforeLogin = () => {
           onClick={() => navigate("/")}
         >
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center group-hover:rotate-6 transition-transform">
-            <span className="text-black font-bold text-xs">N</span>
+            <span className="text-black font-bold text-xs">S</span>
           </div>
           <h1 className="text-xl font-semibold tracking-tight text-white">
-            Notes<span className="text-neutral-500">App</span>
+            Side<span className="text-neutral-500">Ink</span>
           </h1>
         </div>
 

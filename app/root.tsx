@@ -29,13 +29,16 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// Keep clientLoader for browser-side auth check
+// ✅ UPDATED: Added a small delay to prevent the "instant flash" glitch
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const user = await requireUserSession(request);
+  const [user] = await Promise.all([
+    requireUserSession(request),
+    new Promise((resolve) => setTimeout(resolve, 1000)), // 1s delay for smooth intro
+  ]);
   return { user };
 }
 
-// Custom fallback that shows while clientLoader is initializing
+// ✅ UPDATED: Fixed alignment to ensure it is perfectly centered
 export function HydrateFallback() {
   return (
     <html lang="en">
@@ -45,7 +48,7 @@ export function HydrateFallback() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-neutral-950 text-neutral-100 flex items-center justify-center min-h-screen selection:bg-white selection:text-black">
+      <body className="h-screen w-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-center overflow-hidden selection:bg-white selection:text-black">
         <div className="flex flex-col items-center gap-6 animate-pulse">
           <div className="relative">
             {/* Outer static ring */}
@@ -57,7 +60,7 @@ export function HydrateFallback() {
           <div className="flex flex-col items-center gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] text-neutral-500 uppercase tracking-widest">
               <Sparkles size={10} className="text-sky-400" />
-              <span>Rice UI System</span>
+              <span>SideInk</span>
             </div>
             <h2 className="text-xl font-bold tracking-tight bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent">
               Welcome to the site
